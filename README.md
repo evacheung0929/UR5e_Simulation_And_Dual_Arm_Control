@@ -19,15 +19,16 @@ _ITALIC TEXT_
 - [] TODO ITEMM 2
 
 ---
+Installing Rvis with the UR5 Robot, assumed a prefred ROS distribution is already installed
+`$ sudo apt-get install ros-$ROS_DISTRO-rviz`
 
-`.Code`
-
+Install ROS packages that publis the robot joint state:
 ``` sh
-instal ..... lkdflaj
+$ sudo apt-get install ros-$ROS_DISTRO-joint-state-publisher-gui
 ```
-
+In order to tell Rviz what the robot looks like, install universal-robot pakage from the *[ROS industrial]*(http://wiki.ros.org/universal_robot/Tutorials/Getting%20Started%20with%20a%20Universal%20Robot%20and%20ROS-Industrial) project
 ```js
-this is another code
+~/catkin_ws/src$ git clone -b $ROS_DISTRO-devel https://github.com/ros-industrial/universal_robot.git
 ```
 
 ```html
