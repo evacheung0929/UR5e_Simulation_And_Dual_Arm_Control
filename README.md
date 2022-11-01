@@ -26,7 +26,7 @@ Install ROS packages that publis the robot joint state:
 ``` sh
 $ sudo apt-get install ros-$ROS_DISTRO-joint-state-publisher-gui
 ```
-In order to tell Rviz what the robot looks like, install universal-robot pakage from the *[ROS industrial]*(http://wiki.ros.org/universal_robot/Tutorials/Getting%20Started%20with%20a%20Universal%20Robot%20and%20ROS-Industrial) project
+In order to tell Rviz what the robot looks like, install universal-robot pakage from the [ROS industrial](http://wiki.ros.org/universal_robot/Tutorials/Getting%20Started%20with%20a%20Universal%20Robot%20and%20ROS-Industrial) project
 ```js
 ~/catkin_ws/src$ git clone -b $ROS_DISTRO-devel https://github.com/ros-industrial/universal_robot.git
 ```
