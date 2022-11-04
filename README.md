@@ -34,4 +34,22 @@ In order to tell Rviz what the robot looks like, install universal-robot pakage 
 ```html
 <html><html>
 ```
-[Google](https://wwww.google.com)
+
+---ould not have any m
+problems that I had run into with Ubuntu
+
+1. sudo apt update fetch problem
+```
+W: Failed to fetch http://gb.archive.ubuntu.com/ubuntu/dists/bionic/InRelease  Could not resolve ‘gb.archive.ubuntu.com’
+W: Failed to fetch http://gb.archive.ubuntu.com/ubuntu/dists/bionic-updates/InRelease  Could not resolve ‘gb.archive.ubuntu.com’
+W: Failed to fetch http://gb.archive.ubuntu.com/ubuntu/dists/bionic-backports/InRelease  Could not resolve ‘gb.archive.ubuntu.com’
+W: Failed to fetch http://security.ubuntu.com/ubuntu/dists/bionic-security/InRelease  Could not resolve ‘security.ubuntu.com’
+W: Some index files failed to download. They have been ignored, or old ones used instead.
+```
+solved by
+
+```
+sudo apt clean
+sudo apt update
+```
+
