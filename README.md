@@ -79,6 +79,16 @@ Download the corresponding URSim from the [official website](https://www.univers
 - if ran into vagrant shared folder problem, go to the VM setting & delete the shared folder, followed by reboot
 
 Set up the network as following the providd [Tutorial](https://github.com/UniversalRobots/Universal_Robots_ROS_Driver/blob/master/ur_robot_driver/doc/usage_example.md)
+### URCap file
+Make sure to have installed all the [extensions](https://www.virtualbox.org/wiki/Download_Old_Builds_6_1) for your Virtual Machine in order for it to recognise USB devices
+Install .uRcap file from official website
+Follow [official tutorial](https://dof.robotiq.com/discussion/204/how-to-install-robotiq-s-urcaps-on-ursim) to get .urcap file to work in URSim
+
+Make sure to change the default Host IP from URCap to the device that will be running ROS
+Make sure ROS and URSim are on the same network
+192.168.X.XX (ROS)
+192.168.X.XX (URSim)
+
 
 ## Digital I/O in remote control
 **How to assign IO to ur command script?
