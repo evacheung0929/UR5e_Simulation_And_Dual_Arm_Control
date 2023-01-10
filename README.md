@@ -82,7 +82,8 @@ Set up the network as following the providd [Tutorial](https://github.com/Univer
 ### URCap file
 Make sure to have installed all the [extensions](https://www.virtualbox.org/wiki/Download_Old_Builds_6_1) for your Virtual Machine in order for it to recognise USB devices
 Install .uRcap file from official website
-Follow [official tutorial](https://dof.robotiq.com/discussion/204/how-to-install-robotiq-s-urcaps-on-ursim) to get .urcap file to work in URSim
+Follow [official tutorial for URCap & URSim](https://dof.robotiq.com/discussion/204/how-to-install-robotiq-s-urcaps-on-ursim) and [External Control setup](
+(https://github.com/UniversalRobots/Universal_Robots_ROS_Driver/blob/master/ur_robot_driver/doc/install_urcap_e_series.md)to get .urcap file to work in URSim
 
 Make sure to change the default Host IP from URCap to the device that will be running ROS
 Make sure ROS and URSim are on the same network
