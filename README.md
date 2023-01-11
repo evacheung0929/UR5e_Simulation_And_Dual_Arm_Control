@@ -88,7 +88,17 @@ Make sure to change the default Host IP from URCap to the device that will be ru
 Make sure ROS and URSim are on the same network
 192.168.X.XX (ROS)
 192.168.X.XX (URSim)
-
+## Connection with the real robot to PC
+1) phycial ethernet connection, enable remote control & provide an ip address in 'static address'
+2) Then in 'Network & Internet' ---> internet sharing centre. There should be an Ethernet connection available. Click on that
+  i)  Properties
+  ii) Internet Protocol Version 4 (TCP/IPv4) properties
+  iii) Manually set the network to be on the same network as the robot with differences in the last digit same subnet mask
+3) ssh connection; the defualt username = root, password = easybot
+  i) using MobaX: ssh ---> start new session ---> host name = ipv4 address, password = easybot
+  ii) using terminal >> ssh ip_address
+  >> enter password
+4) 
 
 ## Digital I/O in remote control
 **How to assign IO to ur command script?
