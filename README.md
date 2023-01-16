@@ -136,6 +136,11 @@ Make sure ROS and URSim are on the same network
 192.168.X.XX (URSim)
 ## Connection with the real robot to PC
 1) phycial ethernet connection, enable remote control & provide an ip address in 'static address'
+  i) ip address: 
+  ii) subnet mask: 255255.255.0 (allows loads of different network)
+  iii) gateway: the last digit has to be 1
+  
+  
 2) Then in 'Network & Internet' ---> internet sharing centre. There should be an Ethernet connection available. Click on that
   i)  Properties
   ii) Internet Protocol Version 4 (TCP/IPv4) properties
