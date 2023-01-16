@@ -79,6 +79,52 @@ Download the corresponding URSim from the [official website](https://www.univers
 - if ran into vagrant shared folder problem, go to the VM setting & delete the shared folder, followed by reboot
 
 Set up the network as following the providd [Tutorial](https://github.com/UniversalRobots/Universal_Robots_ROS_Driver/blob/master/ur_robot_driver/doc/usage_example.md)
+
+## Connection with URSim (VM) to ROS (VM)
+configure both network to Bridge
+get the ip addresss of each using 'ifconfig'
+
+- scan the ports avaliable on the URSim
+```
+# if nmap is not install
+sudo apt install nmap
+
+# scan the network ports
+nmap <custom_ip>
+
+# scan for networks, but more thorough
+nmap <custom_ip> -p-
+
+>>>
+Starting Nmap 7.60 ( https://nmap.org ) at 2023-01-16 14:46 GMT
+Nmap scan report for ursim (192.168.1.33)
+Host is up (0.00029s latency).
+Not shown: 65523 closed ports
+PORT      STATE SERVICE
+22/tcp    open  ssh
+502/tcp   open  mbap
+29919/tcp open  unknown
+29999/tcp open  bingbang
+30001/tcp open  pago-services1
+30002/tcp open  pago-services2
+30003/tcp open  amicon-fpsu-ra
+30004/tcp open  amicon-fpsu-s
+30011/tcp open  unknown
+30012/tcp open  unknown
+30013/tcp open  unknown
+30020/tcp open  unknown
+
+Nmap done: 1 IP address (1 host up) scanned in 3.67 seconds
+```
+
+In order to connect to the desire port via terminal
+```
+netcat <custom_ip> <port>
+```
+
+type in command 'play' to start playing the program
+type in command 'stop' to stop playing the program
+
 ### URCap file
 Make sure to have installed all the [extensions](https://www.virtualbox.org/wiki/Download_Old_Builds_6_1) for your Virtual Machine in order for it to recognise USB devices
 Install .uRcap file from official website
