@@ -175,6 +175,10 @@ Make sure ROS and URSim are on the same network
 ## Digital I/O in remote control
 **How to assign IO to ur command script?
 
+* Bullet list
+    * Nested bullet
+        * Sub-nested bullet etc
+* Bullet list item 2
 [put the robot in free drive mode using external program](https://forum.universal-robots.com/t/use-digital-input-mapped-to-freedrive-in-remote-mode/2944)
 
 
