@@ -153,18 +153,18 @@ Make sure ROS and URSim are on the same network
     ii) Go to network setting of the ROS VM, Enable Network Adapter  --> 'Bridge Adapter' --> 'Name' = ethernet connection name, which can be obtained from 'Network & Internet' --> ethernet --> Description (in the window host)
     ii) subnet mask: 255255.255.0
     iii) gateway: 192.168.1.1, universally, this last digit has to be 1 for gateway, think of it as an auto-recognition of wifi box
+    
 **Network setups are all completed!**
  
- Markup : * Bullet list
-              * Nested bullet
-                  * Sub-nested bullet etc
-          * Bullet list item 2
-
-
- Markup : - Bullet list
-              - Nested bullet
-                  - Sub-nested bullet etc
-          - Bullet list item 2 
+ ports connection
+ 
+ * Check avaliable ports
+    * ```
+    nmap <ip address> -p-
+    * ```
+    * 
+        * Sub-nested bullet etc
+  * Bullet list item 2
  #### If you want ssh connection
 1) ssh connection; the defualt username = root, password = easybot
   i) using MobaX: ssh ---> start new session ---> host name = ipv4 address, password = easybot
@@ -179,6 +179,7 @@ Make sure ROS and URSim are on the same network
     * Nested bullet
         * Sub-nested bullet etc
 * Bullet list item 2
+* 
 [put the robot in free drive mode using external program](https://forum.universal-robots.com/t/use-digital-input-mapped-to-freedrive-in-remote-mode/2944)
 
 
