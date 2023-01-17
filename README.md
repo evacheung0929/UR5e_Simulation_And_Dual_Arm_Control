@@ -159,9 +159,7 @@ Make sure ROS and URSim are on the same network
  ports connection
  
  * Check avaliable ports
-    * ```
-    nmap <ip address> -p-
-    * ```
+    * ```nmap <ip address> -p-```
     * 
         * Sub-nested bullet etc
   * Bullet list item 2
