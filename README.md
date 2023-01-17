@@ -135,17 +135,27 @@ Make sure ROS and URSim are on the same network
 192.168.X.XX (ROS)
 192.168.X.XX (URSim)
 ## Connection with the real robot to PC
-1) phycial ethernet connection, enable remote control & provide an ip address in 'static address'
-  i) ip address: 
-  ii) subnet mask: 255255.255.0 (allows loads of different network)
-  iii) gateway: the last digit has to be 1, example 192.168.0.1, set this for robot as well as the pc that's trying to connect to it. think of it as a wifi box
-  
+### network setup
+  1) phycial ethernet connection, enable remote control
+  2) In windows host, Edit the IP address of the ethernet in 'Network & Internet'
+      i) IPv4 address should be on the same network as the robot with last digit differences: 192.168.1.6
+      ii) Subnet mask sets the network format: 255.255.255.0
+      iii) IPv4 gateway sets the universal network (like WiFi) for the communication: 192.168.1.1
+      iv) The DNS will be obtained from the robot in the next step. Manually type it in after obtaining the info.
+  2) Go to the UR teach pendant, manually change the network setting (static) to be on the same network of the above
+    i) IPv4 = 192.168.5
+    ii) Identical subnet mask
+    iii) Identical gateway
+    iv) DNS should automatically pop out, if not, set it to be 10.0.2.3
+    
+  3) Choose the VM that'll be running ROS on Virtual Box --> File --> Make sure the Host Network Manager is empty otherwise the network limits what it can see (VM.a can only see VM.b but not the ethernet)
+    ii) Go to network setting of the ROS VM, Enable Network Adapter  --> 'Bridge Adapter' --> 'Name' = ethernet connection name, which can be obtained from 'Network & Internet' --> ethernet --> Description (in the window host)
+    ii) subnet mask: 255255.255.0
+    iii) gateway: 192.168.1.1, universally, this last digit has to be 1 for gateway, think of it as an auto-recognition of wifi box
+**Network setups are all completed!**
  
-2) Then in 'Network & Internet' ---> internet sharing centre. There should be an Ethernet connection available. Click on that
-  i)  Properties
-  ii) Internet Protocol Version 4 (TCP/IPv4) properties
-  iii) Manually set the network to be on the same network as the robot with differences in the last digit same subnet mask
-3) ssh connection; the defualt username = root, password = easybot
+ #### If you want ssh connection
+1) ssh connection; the defualt username = root, password = easybot
   i) using MobaX: ssh ---> start new session ---> host name = ipv4 address, password = easybot
   ii) using terminal >> ssh ip_address
   >> enter password
