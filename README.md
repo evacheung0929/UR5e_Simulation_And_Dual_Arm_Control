@@ -155,6 +155,16 @@ Make sure ROS and URSim are on the same network
     iii) gateway: 192.168.1.1, universally, this last digit has to be 1 for gateway, think of it as an auto-recognition of wifi box
 **Network setups are all completed!**
  
+ Markup : * Bullet list
+              * Nested bullet
+                  * Sub-nested bullet etc
+          * Bullet list item 2
+
+
+ Markup : - Bullet list
+              - Nested bullet
+                  - Sub-nested bullet etc
+          - Bullet list item 2 
  #### If you want ssh connection
 1) ssh connection; the defualt username = root, password = easybot
   i) using MobaX: ssh ---> start new session ---> host name = ipv4 address, password = easybot
