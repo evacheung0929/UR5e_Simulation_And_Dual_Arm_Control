@@ -1,5 +1,5 @@
 # UR5_ROS_Simulation
-This repository summarises my learning of Universal Robot from simulation to actual robot connection using ROS
+This repository summarises my learning of Universal Robot from simulation to actual robot connection using ROS, Dashboard and ur_rtde
 ## Rviz 
 **BOLD TEXT HERE**
 
