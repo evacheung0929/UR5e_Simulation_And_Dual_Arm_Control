@@ -7,7 +7,7 @@ Polyscope version: 5.13.0
 UR packages: [UR_ROS_Driver](https://github.com/UniversalRobots/Universal_Robots_ROS_Driver), as the industrial robot package will not support e-series 5.XX
 - for usage of how to use the ur_robot_driver, look at [Tutorial](https://github.com/UniversalRobots/Universal_Robots_ROS_Driver/blob/master/ur_robot_driver/doc/usage_example.md)
 
-
+---
 ## Rviz 
 **BOLD TEXT HERE**
 
@@ -167,7 +167,7 @@ Make sure ROS and URSim are on the same network
   ii) using terminal >> ssh ip_address
   >> enter password
 4) 
-
+---
 ## Digital I/O in remote control
 **How to assign IO to ur command script?
 
