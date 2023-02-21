@@ -8,22 +8,11 @@ UR packages: [UR_ROS_Driver](https://github.com/UniversalRobots/Universal_Robots
 - for usage of how to use the ur_robot_driver, look at [Tutorial](https://github.com/UniversalRobots/Universal_Robots_ROS_Driver/blob/master/ur_robot_driver/doc/usage_example.md)
 
 ---
-## Rviz 
+## Rviz/Gazebo
 **BOLD TEXT HERE**
 
-_ITALIC TEXT_
-*ITALIC TEXT 2*
-
-~~STRIKE THROUGH~~
-1. 
-2. hah
-3. Lst
-
-* Item 1
-* Item 2
-
-- [x] TODO ITEM 2
-- [] TODO ITEMM 2
+- [x] Use Rviz for motion planning purposes, demonstrating the robot's perception of the world (what the robot think it's happening)
+- [] Use Gazebo visualise the reality of what is happening
 
 ---
 Installing Rvis with the UR5 Robot, assumed a prefred ROS distribution is already installed
@@ -181,5 +170,3 @@ Make sure ROS and URSim are on the same network
 
 [ros-planning](https://github.com/ros-planning/moveit_tutorials/tree/melodic-devel) with moveit
 
-
-# How to start this project
