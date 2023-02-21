@@ -1,5 +1,13 @@
 # UR5_ROS_Simulation
 This repository summarises my learning of Universal Robot from simulation to actual robot connection using ROS, Dashboard and ur_rtde. It's a working process, so stay tunned!
+
+Goal: UR5e Pick and place simulation + real-robot motion planning with screwdriver & customised Airpick.
+ROS Distro: Melodic (Ubuntu 18.04 LTS)
+Polyscope version: 5.13.0
+UR packages: [UR_ROS_Driver](https://github.com/UniversalRobots/Universal_Robots_ROS_Driver), as the industrial robot package will not support e-series 5.XX
+- for usage of how to use the ur_robot_driver, look at [Tutorial](https://github.com/UniversalRobots/Universal_Robots_ROS_Driver/blob/master/ur_robot_driver/doc/usage_example.md)
+
+
 ## Rviz 
 **BOLD TEXT HERE**
 
@@ -52,15 +60,6 @@ sudo apt clean
 sudo apt update
 ```
 
-
-
-## README
-
-This is a testing project for UR5e Pick and place simulation + real-robot motion planning with screwdriver & customised epick.
-ROS Distro: Melodic (Ubuntu 18.04 LTS)
-Polyscope version: 5.12.0
-UR packages: [UR_ROS_Driver](https://github.com/UniversalRobots/Universal_Robots_ROS_Driver), as the industrial robot package will not support e-series 5.XX
-- for usage of how to use the ur_robot_driver, look at [Tutorial](https://github.com/UniversalRobots/Universal_Robots_ROS_Driver/blob/master/ur_robot_driver/doc/usage_example.md)
 
 ### Pre-resiquite
 CAD files of the end-effectors are correctly provided
