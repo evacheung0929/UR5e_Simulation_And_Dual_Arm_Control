@@ -26,6 +26,7 @@
 #
 # ---------------------------------------------------------------------
 import sys
+import math
 from xml_testing import XML_FILES_2
 # rotation of the screw & force feedback
 # will airpick still be problem in ROS? (lagging) 
@@ -101,7 +102,23 @@ class TrajectoryClient:
 
         self.joint_trajectory_controller = JOINT_TRAJECTORY_CONTROLLERS[0]
         self.cartesian_trajectory_controller = CARTESIAN_TRAJECTORY_CONTROLLERS[0]
+    # return degree from the radians
+    def degree(self,r):
+        d = r*180/math.pi
+        return d
+    
+    # return radians
+    def radians(self,d):
+        r = d*math.pi/180
+        return r
 
+    def deg2rad_conversion(self, waypoint):
+        for i in range(len(waypoint)):
+            waypoint[i] = self.radians(waypoint[i])
+            # math.ceil round decimals to the nearest int (round up), it was then place back to decimal
+            waypoint[i] = math.ceil(waypoint[i]*100)/100
+        return waypoint
+    
     def send_joint_trajectory(self):
         """Creates a trajectory and sends it using the selected action server"""
 
@@ -124,12 +141,21 @@ class TrajectoryClient:
 
         # The following list are arbitrary positions
         # Change to your own needs if desired
-        # first waypoint
-        position_list = [[1,-0.2,0.3,0.5,1,0]]
-        # position_list = [[-0.13, -92.53, -112.63, -29.45, 84.91, 9.62]]
         
+        original = self.deg2rad_conversion([-90.00, -89.00, -118.00, -63.00, 90.00, 1.00])
+        point_1 = self.deg2rad_conversion([-7.00, -89.00, -118.00, -63.00, 90.00, 1.00])
+        
+        # new_pose = [-67.41, -89.00, -118.00, -63.00, 90.00, 1.00]
+        # # --->
+        position_list = [original,point_1]
+        # position_list = [[-1.57, -1.55,-2.05,-1.10,1.57,0.02]]
+        # position_list = [[1,-0.2,0.3,0.5,1,0]]
+
+        # position_list = [[0.13, 0,0,0,0,0]]
+        
+        # position_list = [[0.1,0,0,0,0,0]]
         # # 2nd waypoint
-        position_list.append([0.2, -1.57, -1.57, 0, 0, 0])
+        # position_list.append([0.2, -1.57, -1.57, 0, 0, 0])
 
         duration_list = [3.0, 7.0, 1.0]
 	# insert my own code
@@ -170,7 +196,7 @@ class TrajectoryClient:
         # only save file if success
         if result.error_code == r.SUCCESSFUL:
             # save to file
-            file = XML_FILES_2(input('scan your thing! '))
+            file = XML_FILES_2(input('GET ROBOT INFORMATION!!!!'))
             file.generate_xml()
 ########################################################################################################
 
