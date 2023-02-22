@@ -125,24 +125,23 @@ Make sure ROS and URSim are on the same network
 192.168.X.XX (URSim)
 ## Connection with the real robot to PC
 ### network setup
-  1) phycial ethernet connection, enable remote control
-  2) In windows host, Edit the IP address of the ethernet in 'Network & Internet'
-      i) IPv4 address should be on the same network as the robot with last digit differences: 192.168.1.6
-      ii) Subnet mask sets the network format: 255.255.255.0
-      iii) IPv4 gateway sets the universal network (like WiFi) for the communication: 192.168.1.1
-      iv) The DNS will be obtained from the robot in the next step. Manually type it in after obtaining the info.
-  2) Go to the UR teach pendant, manually change the network setting (static) to be on the same network of the above
-    1) IPv4 = 192.168.5
-    2) Identical subnet mask
-              2. Which is numbered
-          2. Which is numbered
-          
-          
-  3) Choose the VM that'll be running ROS on Virtual Box --> File --> Make sure the Host Network Manager is empty otherwise the network limits what it can see (VM.a can only see VM.b but not the ethernet)
-    ii) Go to network setting of the ROS VM, Enable Network Adapter  --> 'Bridge Adapter' --> 'Name' = ethernet connection name, which can be obtained from 'Network & Internet' --> ethernet --> Description (in the window host)
-    ii) subnet mask: 255255.255.0
-    iii) gateway: 192.168.1.1, universally, this last digit has to be 1 for gateway, think of it as an auto-recognition of wifi box
-    
+**Physical connection**
+* phycial ethernet connection, enable remote control in robot setting
+
+**Window host**
+* Edit the IP address of the ethernet in "Network & Internet"
+* ```ipconfig``` in window terminal should be able to show the ipv4 address, subnet mask etc, manually type in this information into the 'static address' within the robot  
+* IPv4 address should be on the same network as the robot with last digit differences: 192.168.1.6
+* Subnet mask sets the network format: 255.255.255.0
+*  IPv4 gateway sets the universal network (like WiFi) for the communication: 192.168.1.1
+*  The DNS will be obtained from the robot in the next step. Manually type it in after obtaining the info.
+
+**Virtual Box**
+* Choose the VM that will be running ROS on virtual box
+  1) Go to _File_ ---> Make sure the Host Network Manager is empty otherwise the network limits what the VM network can see (VM-A can only see VM-B but cannot see the ethernet)
+  2) Go to VM _setting_ --> _Network_ --> _Adapter_, set one of the apater to be _**"Bridge Adapter"**_, with _**Name:<ethernet_name>**_. The ethernet name can be obtained from window host _ethernet description_ in "Network & Internet"
+  3) Run the virtual machine, within the virtual machine go to _Device_ --> _Network_, unselect the previous network adaptor that was being used for URSim, and choose the one with the ethernet connection
+    ---
 **Network setups are all completed!**
  
  ports connection
