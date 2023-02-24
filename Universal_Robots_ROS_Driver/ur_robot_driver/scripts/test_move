@@ -27,7 +27,13 @@
 # ---------------------------------------------------------------------
 import sys
 import math
+from datetime import datetime
+# ---------------------------------------------------------------------
 from xml_testing import XML_FILES_2
+from dashboard import Dasboard_Server
+from dashboard_client import Dashboard_Client
+from playtime import Run_Time
+# ---------------------------------------------------------------------
 # rotation of the screw & force feedback
 # will airpick still be problem in ROS? (lagging) 
 import rospy
@@ -102,6 +108,8 @@ class TrajectoryClient:
 
         self.joint_trajectory_controller = JOINT_TRAJECTORY_CONTROLLERS[0]
         self.cartesian_trajectory_controller = CARTESIAN_TRAJECTORY_CONTROLLERS[0]
+
+# ---------------------------------------------------------------------
     # return degree from the radians
     def degree(self,r):
         d = r*180/math.pi
@@ -118,10 +126,9 @@ class TrajectoryClient:
             # math.ceil round decimals to the nearest int (round up), it was then place back to decimal
             waypoint[i] = math.ceil(waypoint[i]*100)/100
         return waypoint
-    
+# ---------------------------------------------------------------------
     def send_joint_trajectory(self):
         """Creates a trajectory and sends it using the selected action server"""
-
         # make sure the correct controller is loaded and activated
         self.switch_controller(self.joint_trajectory_controller)
         trajectory_client = actionlib.SimpleActionClient(
@@ -139,26 +146,29 @@ class TrajectoryClient:
         goal = FollowJointTrajectoryGoal()
         goal.trajectory.joint_names = JOINT_NAMES
 
+# ---------------------------------------------------------------------# ---------------------------------------------------------------------        
+   
+    
         # The following list are arbitrary positions
         # Change to your own needs if desired
+        # linear movment
+        original = self.deg2rad_conversion([113.36, -115.62, 99.13, 262.34, -50.60, 34.94])
+        point_1 = self.deg2rad_conversion([85.00, -125.40, 104.93, 291.67, -45.28, -8.52])
         
-        original = self.deg2rad_conversion([-90.00, -89.00, -118.00, -63.00, 90.00, 1.00])
-        point_1 = self.deg2rad_conversion([-7.00, -89.00, -118.00, -63.00, 90.00, 1.00])
-        
-        # new_pose = [-67.41, -89.00, -118.00, -63.00, 90.00, 1.00]
-        # # --->
-        position_list = [original,point_1]
-        # position_list = [[-1.57, -1.55,-2.05,-1.10,1.57,0.02]]
-        # position_list = [[1,-0.2,0.3,0.5,1,0]]
+        # linear movment
+        # point_1 = self.deg2rad_conversion([-90.00, -84.04, -106.04, -79.92, 90.00, 1.00])
+        # point_1 = self.deg2rad_conversion([-7.00, -89.00, -118.00, -63.00, 90.00, 1.00])
 
-        # position_list = [[0.13, 0,0,0,0,0]]
-        
-        # position_list = [[0.1,0,0,0,0,0]]
+        position_list = [original,point_1]
         # # 2nd waypoint
         # position_list.append([0.2, -1.57, -1.57, 0, 0, 0])
-
-        duration_list = [3.0, 7.0, 1.0]
-	# insert my own code
+        
+        # time from start, sec, nses. time from start needs to be strictly < sec
+        # slower 
+        duration_list = [10.0, 15.0, 1.0]
+        # fast
+        # duration_list = [3.0, 7.0, 1.0]
+# ---------------------------------------------------------------------# ---------------------------------------------------------------------
 
     # trajectory_msg.msgs
     # FollowJointTrajectoryGoal takes info from JointTrajectoryPoint 
@@ -167,14 +177,40 @@ class TrajectoryClient:
             point = JointTrajectoryPoint()
             point.positions = position
             point.time_from_start = rospy.Duration(duration_list[i])
-            ###################################################
-            # if the second waypoint is surccesful
-            ###################################################
+
             goal.trajectory.points.append(point)
         #rospy.loginfo("This is the {} movement".format(count)) #
         self.ask_confirmation(position_list)
         rospy.loginfo("Executing trajectory using the {}".format(self.joint_trajectory_controller))
+##################################################################################
+        # Uncomment to Load a different program and activate the robot using socket
+        # content = "load external.urp" # change 'external' to your desired program name
+        # dashboard = Dasboard_Server()
+        # dashboard.power_on_and_brake_release()
+        # dashboard.load_program(content)
 
+        '''ROS dashboard service and client is being used to perform robot action such as play, load different program, power on, power off and pause program etc.'''
+        dashboard = Dashboard_Client()
+
+        '''check if the robot is in remote mode, if not, then raise a message '''
+
+        # power on the robot & brake_release
+        dashboard.connect()
+        dashboard.power_on()
+        dashboard.brake_release()
+        
+        # Enter the program that you would like to upload
+        # program variable: program name that is stored in the pendant
+        # MAKE SURE the value matches with the one you want to call in the teach pendant
+        # vm naming
+        # program_names = {'external':'external', 'pcb_pick_and_place':'pcb', 'test':'testing'}
+        # real robot naming
+        program_names = {'external':'external_control', 'pcb_pick_and_place':'pcb', 'test':'external_test'}
+
+        # External called first to perform xml file gathering
+        dashboard.load_program(program_names['external'])
+        dashboard.play() 
+##################################################################################
         trajectory_client.send_goal(goal)
         trajectory_client.wait_for_result()
         # state = trajectory_client.get_state()
@@ -198,6 +234,18 @@ class TrajectoryClient:
             # save to file
             file = XML_FILES_2(input('GET ROBOT INFORMATION!!!!'))
             file.generate_xml()
+
+# ------------------------------------------------------------------------------------------------------------------------------------------
+        # dashb
+        # load and play a different program
+        dashboard.load_program(program_names['test'])
+        
+        # play for 5 seconds then pause, duration measured in seconds
+        playtime = Run_Time()
+        duration = 5
+        playtime_count = playtime.set_timer(5)
+
+# ------------------------------------------------------------------------------------------------------------------------------------------
 ########################################################################################################
 
     def send_cartesian_trajectory(self):

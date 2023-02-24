@@ -18,6 +18,7 @@ class XML_FILES_2:
     def generate_xml(self):
         t = datetime.utcnow().strftime(("%Y/%m/%d %H:%M:%S:%f"))
         t = t[:-3]
+    
 
         root = ET.Element('TestData')
         ET.SubElement(root,"Operator")
@@ -33,9 +34,8 @@ class XML_FILES_2:
                 'Result':'PASSED',
                 'DateAndTime':t}
         for i in data:
-            # ET.SubElement(m2,i)
             ET.SubElement(m2,i).text = str(data[i])
-            # print(data[i]        
+            # print(data[i])  --> 'Thermal paste...'      
         xml = ET.tostring(root)
         # print(xml)
         
@@ -44,6 +44,7 @@ class XML_FILES_2:
         xmlstr = minidom.parseString(ET.tostring(root)).toprettyxml(indent="   ", encoding = 'utf-8')
         # print(xmlstr)
         self.file_name = self.file_path + str(self.enc_serial)+'.xml'
+        
         # # write the xml file into the provided file path
         # # With binary mode, we cannot use the encoding keyword argument when opening a file. Decode required
         with open(self.file_name,'w') as f:
