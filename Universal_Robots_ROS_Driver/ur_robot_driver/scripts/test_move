@@ -30,9 +30,16 @@ import math
 from datetime import datetime
 # ---------------------------------------------------------------------
 from xml_testing import XML_FILES_2
-from dashboard import Dasboard_Server
-from dashboard_client import Dashboard_Client
-from playtime import Run_Time
+# from dashboard import Dasboard_Server
+# from dashboard_client import Dashboard_Client
+# from playtime import Run_Time
+from wait_4_service import Dashboard_Client
+
+import rospy
+from ur_dashboard_msgs.srv import Load, LoadRequest, Popup, PopupRequest, IsInRemoteControl,IsInRemoteControlRequest, GetRobotMode, GetRobotModeRequest
+from std_srvs.srv import Trigger, TriggerRequest
+import time
+from Timer import Time_Out_Check
 # ---------------------------------------------------------------------
 # rotation of the screw & force feedback
 # will airpick still be problem in ROS? (lagging) 
@@ -93,6 +100,16 @@ class TrajectoryClient:
     def __init__(self):
         rospy.init_node("test_move")
 
+        # dashboard communication
+        self.program_names = {'external':'external_control', 'pcb_pick_and_place':'pcb', 'test':'external_test'}
+        self.load_program = Dashboard_Client('load_program', Load, LoadRequest())
+        self.start_program = Dashboard_Client('play', Trigger, TriggerRequest())
+        self.stop_program =Dashboard_Client('stop', Trigger, TriggerRequest())
+        self.power_on_robot = Dashboard_Client('power_on', Trigger, TriggerRequest())
+        self.brake_release =Dashboard_Client('brake_release', Trigger, TriggerRequest())
+        self.pause_robot = Dashboard_Client('pause', Trigger, TriggerRequest())  
+
+
         timeout = rospy.Duration(5)
         self.switch_srv = rospy.ServiceProxy(
             "controller_manager/switch_controller", SwitchController
@@ -108,7 +125,7 @@ class TrajectoryClient:
 
         self.joint_trajectory_controller = JOINT_TRAJECTORY_CONTROLLERS[0]
         self.cartesian_trajectory_controller = CARTESIAN_TRAJECTORY_CONTROLLERS[0]
-
+        
 # ---------------------------------------------------------------------
     # return degree from the radians
     def degree(self,r):
@@ -128,6 +145,26 @@ class TrajectoryClient:
         return waypoint
 # ---------------------------------------------------------------------
     def send_joint_trajectory(self):
+######################################################################################################################################################################################################################################################
+
+
+        '''ROS dashboard service and client is being used to perform robot action such as play, load different program, power on, power off and pause program etc.'''
+
+        '''check if the robot is in remote mode, if not, then raise a message.
+        Enter the program that you would like to upload.
+        program variable = program name that is stored in the pendant
+        MAKE SURE name matches with  the teach pendant!
+        '''
+        # # External called first to perform xml file gathering
+        # self.dashboard.load_program(program_names['external'])
+
+        self.load_program.load(file_name = self.program_names['external'])
+        self.start_program.play()
+        # how to check if a program has completed?
+        time.sleep(10)
+
+########################################################################################################################################################################################################################################################################################################################################
+
         """Creates a trajectory and sends it using the selected action server"""
         # make sure the correct controller is loaded and activated
         self.switch_controller(self.joint_trajectory_controller)
@@ -182,35 +219,6 @@ class TrajectoryClient:
         #rospy.loginfo("This is the {} movement".format(count)) #
         self.ask_confirmation(position_list)
         rospy.loginfo("Executing trajectory using the {}".format(self.joint_trajectory_controller))
-##################################################################################
-        # Uncomment to Load a different program and activate the robot using socket
-        # content = "load external.urp" # change 'external' to your desired program name
-        # dashboard = Dasboard_Server()
-        # dashboard.power_on_and_brake_release()
-        # dashboard.load_program(content)
-
-        '''ROS dashboard service and client is being used to perform robot action such as play, load different program, power on, power off and pause program etc.'''
-        dashboard = Dashboard_Client()
-
-        '''check if the robot is in remote mode, if not, then raise a message '''
-
-        # power on the robot & brake_release
-        dashboard.connect()
-        dashboard.power_on()
-        dashboard.brake_release()
-        
-        # Enter the program that you would like to upload
-        # program variable: program name that is stored in the pendant
-        # MAKE SURE the value matches with the one you want to call in the teach pendant
-        # vm naming
-        # program_names = {'external':'external', 'pcb_pick_and_place':'pcb', 'test':'testing'}
-        # real robot naming
-        program_names = {'external':'external_control', 'pcb_pick_and_place':'pcb', 'test':'external_test'}
-
-        # External called first to perform xml file gathering
-        dashboard.load_program(program_names['external'])
-        dashboard.play() 
-##################################################################################
         trajectory_client.send_goal(goal)
         trajectory_client.wait_for_result()
         # state = trajectory_client.get_state()
@@ -219,7 +227,7 @@ class TrajectoryClient:
 
         result = trajectory_client.get_result()
         rospy.loginfo("Trajectory execution finished in state {}".format(result.error_code))
-########################################################################################################
+
         result_dic = {r.SUCCESSFUL:"Files successfuly created!", r.INVALID_GOAL:"Invalid Goal",
                       r.INVALID_JOINTS:"Invalid Joints!", r.OLD_HEADER_TIMESTAMP:"Old head timestamp",
                       r.PATH_TOLERANCE_VIOLATED:"Path tolerance voilated", 
@@ -231,21 +239,21 @@ class TrajectoryClient:
 
         # only save file if success
         if result.error_code == r.SUCCESSFUL:
+            # self.pause_robot.connect()
             # save to file
+            self.stop_program.connect()
             file = XML_FILES_2(input('GET ROBOT INFORMATION!!!!'))
             file.generate_xml()
 
-# ------------------------------------------------------------------------------------------------------------------------------------------
-        # dashb
-        # load and play a different program
-        dashboard.load_program(program_names['test'])
-        
-        # play for 5 seconds then pause, duration measured in seconds
-        playtime = Run_Time()
-        duration = 5
-        playtime_count = playtime.set_timer(5)
-
-# ------------------------------------------------------------------------------------------------------------------------------------------
+# # ------------------------------------------------------------------------------------------------------------------------------------------
+#         # dashb
+#         # load and play a different program
+            self.load_program.load(file_name = self.program_names['test'])
+            self.start_program.play()
+            time.sleep(5)
+            self.stop_program.connect()
+            
+            # ------------------------------------------------------------------------------------------------------------------------------------------
 ########################################################################################################
 
     def send_cartesian_trajectory(self):
@@ -402,18 +410,23 @@ class TrajectoryClient:
 
 
 if __name__ == "__main__":
-    client = TrajectoryClient()
 
+    client = TrajectoryClient()
+    power_on =Dashboard_Client('power_on', Trigger, TriggerRequest())
+    # brake_release =Dashboard_Client('brake_release', Trigger, TriggerRequest())
+    # power_on.connect()
+    # brake_release.connect()
     # The controller choice is obviously not required to move the robot. It is a part of this demo
     # script in order to show all available trajectory controllers.
-    trajectory_type = client.choose_controller()
-    if trajectory_type == "joint_based":
-        client.send_joint_trajectory()
-    elif trajectory_type == "cartesian":
-        client.send_cartesian_trajectory()
-    else:
-        raise ValueError(
-            "I only understand types 'joint_based' and 'cartesian', but got '{}'".format(
-                trajectory_type
-            )
-        )
+
+    # trajectory_type = client.choose_controller()
+    # if trajectory_type == "joint_based":
+    client.send_joint_trajectory()
+    # elif trajectory_type == "cartesian":
+    #     client.send_cartesian_trajectory()
+    # else:
+    #     raise ValueError(
+    #         "I only understand types 'joint_based' and 'cartesian', but got '{}'".format(
+    #             trajectory_type
+    #         )
+        # )

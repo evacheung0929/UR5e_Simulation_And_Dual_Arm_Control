@@ -29,16 +29,36 @@ class Dasboard_Server:
             print(data)
         sock.close()
 
+    def play(self):
+        content = ["play"]
+        # send the data to the socket, hence send commands
+        sock = self.connection()
+        for i in range(len(content)):
+            sock.send(content[i])
+            time.sleep(0.5)
+        # .recv = read incoming data on the socket
+            data = sock.recv(1024)
+            print(data)
+        # sock.close()
+
     def load_program(self, program_name):
         content = program_name
         sock=self.connection()
         sock.send(content)
         time.sleep(0.5)
         data = sock.recv(1024)      
-# d = Dasboard_Server("192.168.1.93", 29999)
+
+robot_ip = "192.168.1.25"
+d = Dasboard_Server(robot_ip, 29999)
+# d.connection()
+# d.power_on_and_brake_release()
+
+d.play()
+
 # d.power_on_and_brake_release()
 
 # robot_ip = "192.168.1.29"
+
 # port = 29999 
 # s = socket.socket(socket.AF_INET, socket.s)
 # s.connect((robot_ip,port))

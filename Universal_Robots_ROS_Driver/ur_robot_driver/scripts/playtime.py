@@ -22,7 +22,7 @@ class Run_Time:
                     self.t_duration = timeit.default_timer()       
                 self.t_duration = timeit.default_timer()
             else:
-                self.dashboard.pause()
+                self.dashboard.stop()
                 rospy.loginfo("Time is up, the current program has been paused")
                 print('stop')
                 self.on = False
