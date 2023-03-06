@@ -413,9 +413,9 @@ if __name__ == "__main__":
 
     client = TrajectoryClient()
     power_on =Dashboard_Client('power_on', Trigger, TriggerRequest())
-    # brake_release =Dashboard_Client('brake_release', Trigger, TriggerRequest())
-    # power_on.connect()
-    # brake_release.connect()
+    brake_release =Dashboard_Client('brake_release', Trigger, TriggerRequest())
+    power_on.connect()
+    brake_release.connect()
     # The controller choice is obviously not required to move the robot. It is a part of this demo
     # script in order to show all available trajectory controllers.
 
