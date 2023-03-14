@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+									<!--dispense.xacro -->
+<robot xmlns:xacro="http://wiki.ros.org/xacro" name="ur5e_robot">
+
+ <!-- load the urdf file -->
+  <xacro:include filename="$(find ur_description)/urdf/inc/ur5e_macro.xacro"/>
+
+   <!-- arm 2 -->
+  <xacro:ur5e_robot prefix="" joint_limits_parameters_file="false" kinematics_parameters_file="$(find ur_description)/config/ur5e/kinematic_dispense.yaml"/>
+
+   <!-- world environment .xacro if we have one -->
+  <link name="world" />
+
+  <joint name="world_joint" type="fixed">
+    <parent link="world" />
+    <child link = "base_link" />
+    <origin xyz="-1.5 0 0" rpy="0.0 0.0 0.0" />
+  </joint>
+
+</robot>

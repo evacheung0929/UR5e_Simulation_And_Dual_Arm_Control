@@ -75,6 +75,7 @@
     <!-- Add URDF transmission elements (for ros_control) -->
     <xacro:ur_arm_transmission prefix="${prefix}" hw_interface="${transmission_hw_interface}" />
 
+
     <!-- links: main serial chain -->
     <link name="${prefix}base_link"/>
     <link name="${prefix}base_link_inertia">
@@ -332,5 +333,14 @@
       <parent link="${prefix}flange"/>
       <child link="${prefix}tool0"/>
     </joint>
+
+   <!-- world environment .xacro if we have one 
+    <link name="world" />
+
+    <joint name="world_to_pick" type="fixed">
+      <parent link="world" />
+      <child link = "${prefix}base_link" />
+      <origin xyz="-0.5 0 0" rpy="0.0 0.0 0.0" />
+    </joint>-->
   </xacro:macro>
 </robot>

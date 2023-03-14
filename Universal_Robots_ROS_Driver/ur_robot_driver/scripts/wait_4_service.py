@@ -43,13 +43,13 @@ class Dashboard_Client:
     def connect(self):
         rospy.wait_for_service(self.service_name)
         client =rospy.ServiceProxy(self.service_name, self.Msg_Name)
-        # request = self.Msg_Request
-        # # request = TriggerRequest()
-        # result = client(request)  
-        # # self.tout(result)
-        # print(result)
-        # self.time_out_check.time_out(result,self.Msg_Request)
-        # return result
+        request = self.Msg_Request
+        # request = TriggerRequest()
+        result = client(request)  
+        # self.tout(result)
+        print(result)
+        self.time_out_check.time_out(result,self.Msg_Request)
+        return result
 
     def load(self, file_name):
         service_name = '/ur_hardware_interface/dashboard/load_program'
@@ -115,8 +115,8 @@ class Dashboard_Client:
 # is_remote_check = Dashboard_Service('is_in_remote_control', IsInRemoteControl, IsInRemoteControlRequest())
 # is_remote_check.load()
 
-power_on =Dashboard_Client('power_on', Trigger, TriggerRequest())
-power_on.connect()
+# power_on =Dashboard_Client('power_on', Trigger, TriggerRequest())
+# power_on.connect()
 # brake_release =Dashboard_Client('brake_release', Trigger, TriggerRequest())
 # brake_release.connect()
 

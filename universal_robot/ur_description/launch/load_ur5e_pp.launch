@@ -2,11 +2,9 @@
 <launch>
   <!--ur5e parameters files -->
   <arg name="joint_limit_params" default="$(find ur_description)/config/ur5e/joint_limits.yaml"/>
-  <arg name="kinematics_params" default="$(find ur_description)/config/ur5e/default_kinematics.yaml"/>
+  <arg name="kinematics_params" default="$(find ur_description)/config/ur5e/kinematic_pick_and_place.yaml"/>
   <arg name="physical_params" default="$(find ur_description)/config/ur5e/physical_parameters.yaml"/>
   <arg name="visual_params" default="$(find ur_description)/config/ur5e/visual_parameters.yaml"/>
-
-
   <!--common parameters -->
   <arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface" />
   <arg name="safety_limits" default="false" doc="If True, enable the safety limits controller"/>
@@ -14,7 +12,21 @@
   <arg name="safety_k_position" default="20" doc="Used to set k position in the safety controller" />
 
   <arg name="robot_model" value="ur5e" />
+  <arg name="prefix" default= "pickAndPlace_" />
 
   <!-- use common launch file and pass all arguments to it -->
+  <param name="robot_description" command="$(find xacro)/xacro '$(find ur_description)/urdf/pp.xacro'
+    robot_model:=$(arg robot_model)
+    prefix:=$(arg prefix)
+    joint_limit_params:=$(arg joint_limit_params)
+    kinematics_params:=$(arg kinematics_params)
+    physical_params:=$(arg physical_params)
+    visual_params:=$(arg visual_params)
+    transmission_hw_interface:=$(arg transmission_hw_interface)
+    safety_limits:=$(arg safety_limits)
+    safety_pos_margin:=$(arg safety_pos_margin)
+    safety_k_position:=$(arg safety_k_position)"
+    />
+
   <include file="$(find ur_description)/launch/load_ur.launch" pass_all_args="true"/>
 </launch>
