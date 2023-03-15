@@ -26,10 +26,11 @@ import time
 
 from Robot_name import Robot
 class Digital_IO:
-    def __init__(self, service_name):
+    def __init__(self, robot_name):
         '''The service name can eitherbe 'p' or 'd', representing pick and palce robot and dispense robot service name'''
         robot = Robot()
-        self.service_name = robot.name(service_name)
+        service_action_name = 'set_io'
+        self.service_name = robot.name(robot_name, service_action_name)
         rospy.wait_for_service(self.service_name,  timeout=3)
         self.client = rospy.ServiceProxy(self.service_name, SetIO)
         self.request = SetIORequest()

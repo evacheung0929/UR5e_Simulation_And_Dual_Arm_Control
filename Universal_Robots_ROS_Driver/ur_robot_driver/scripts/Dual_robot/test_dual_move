@@ -97,8 +97,8 @@ class TrajectoryClient:
     def __init__(self):
         rospy.init_node("test_move")
 
-        self.io_control = Digital_IO()
-
+        self.disp_IO_control = Digital_IO('d')
+        self.pick_IO_control = Digital_IO('p')
         # dashboard communication
         self.dispense_load_program = Dashboard_Client('load_program', Load, LoadRequest(),'d')
         self.dispense_start_program = Dashboard_Client('play', Trigger, TriggerRequest(),'d')
