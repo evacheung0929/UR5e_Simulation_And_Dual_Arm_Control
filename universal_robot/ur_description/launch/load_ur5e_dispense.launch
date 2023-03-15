@@ -12,10 +12,11 @@
   <arg name="safety_k_position" default="20" doc="Used to set k position in the safety controller" />
 
   <arg name="robot_model" value="ur5e" />
-  <arg name="prefix" default= "pickAndPlace_" />
+  <arg name="prefix" default= "dispense_" />
 
   <!-- use common launch file and pass all arguments to it -->
-  <param name="robot_description" command="$(find xacro)/xacro '$(find ur_description)/urdf/dispense.xacro'
+  <!-- <param name="robot_description" command="$(find xacro)/xacro '$(find ur_description)/urdf/dual_ur5e.xacro'-->
+  <param name="robot_description" command="$(find xacro)/xacro '$(find ur_description)/urdf/dispense_final.xacro'
     robot_model:=$(arg robot_model)
     prefix:=$(arg prefix)
     joint_limit_params:=$(arg joint_limit_params)

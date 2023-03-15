@@ -30,16 +30,13 @@ import math
 from datetime import datetime
 # ---------------------------------------------------------------------
 from xml_testing import XML_FILES_2
-from wait_4_service import Dashboard_Client
+from dashboard_dual_service import Dashboard_Client
+from dual_IO import Digital_IO
 
 import rospy
 from ur_dashboard_msgs.srv import Load, LoadRequest, Popup, PopupRequest, IsInRemoteControl,IsInRemoteControlRequest, GetRobotMode, GetRobotModeRequest
 from std_srvs.srv import Trigger, TriggerRequest
 import time
-from Timer import Time_Out_Check
-# ---------------------------------------------------------------------
-# rotation of the screw & force feedback
-# will airpick still be problem in ROS? (lagging) 
 import rospy
 import actionlib
 from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal, FollowJointTrajectoryResult
@@ -57,6 +54,9 @@ from cartesian_control_msgs.msg import (
 # Compatibility for python2 and python3
 if sys.version_info[0] < 3:
     input = raw_input
+
+# Exisitng programs on the teach pendant, key = reference, val = program name within the pendant
+program_names = {'external':'external_control', 'pcb_pick_and_place':'pcb', 'test':'external_test'}
 
 # If your robot description is created with a tf_prefix, those would have to be adapted
 JOINT_NAMES = [
@@ -97,22 +97,39 @@ class TrajectoryClient:
     def __init__(self):
         rospy.init_node("test_move")
 
+        self.io_control = Digital_IO()
+
         # dashboard communication
-        self.program_names = {'external':'external_control', 'pcb_pick_and_place':'pcb', 'test':'external_test'}
-        self.load_program = Dashboard_Client('load_program', Load, LoadRequest())
-        self.start_program = Dashboard_Client('play', Trigger, TriggerRequest())
-        self.stop_program =Dashboard_Client('stop', Trigger, TriggerRequest())
-        self.power_on_robot = Dashboard_Client('power_on', Trigger, TriggerRequest())
-        self.brake_release =Dashboard_Client('brake_release', Trigger, TriggerRequest())
-        self.pause_robot = Dashboard_Client('pause', Trigger, TriggerRequest())  
+        self.dispense_load_program = Dashboard_Client('load_program', Load, LoadRequest(),'d')
+        self.dispense_start_program = Dashboard_Client('play', Trigger, TriggerRequest(),'d')
+        self.dispense_stop_program =Dashboard_Client('stop', Trigger, TriggerRequest(),'d')
+        self.dispense_power_on_robot = Dashboard_Client('power_on', Trigger, TriggerRequest(),'d')
+        self.dispense_brake_release =Dashboard_Client('brake_release', Trigger, TriggerRequest(),'d')
+        self.dispense_pause_robot = Dashboard_Client('pause', Trigger, TriggerRequest(),'d')  
+
+        self.pickAndPlace_load_program = Dashboard_Client('load_program', Load, LoadRequest(),'p')
+        self.pickAndPlace_start_program = Dashboard_Client('play', Trigger, TriggerRequest(),'p')
+        self.pickAndPlace_stop_program =Dashboard_Client('stop', Trigger, TriggerRequest(),'p')
+        self.pickAndPlace_power_on_robot = Dashboard_Client('power_on', Trigger, TriggerRequest(),'p')
+        self.pickAndPlace_brake_release =Dashboard_Client('brake_release', Trigger, TriggerRequest(),'p')
+        self.pickAndPlace_pause_robot = Dashboard_Client('pause', Trigger, TriggerRequest(),'p')  
 
         timeout = rospy.Duration(5)
+        
+        ''' ---------------------------------------------------------------------------------- MAKE SURE TO Switch the right robot! ----------------------------------------------------------------------------------'''
+        self.robot_name = '/pickAndPlace_robot'
+
+        self.switch_controller_serv_name = self.robot_name + "controller_manager/switch_controller"
+        self.load_controller_serv_name = self.robot_name + "controller_manager/load_controller"
+        self.list_controller_serv_name = self.robot_name + "controller_manager/list_controllers"
+        ''' ---------------------------------------------------------------------------------- MAKE SURE TO Switch the right robot! ----------------------------------------------------------------------------------'''
+        
         self.switch_srv = rospy.ServiceProxy(
-            "controller_manager/switch_controller", SwitchController
+            self.switch_controller_serv_name, SwitchController
         )
 	# getting all the controller services ready
-        self.load_srv = rospy.ServiceProxy("controller_manager/load_controller", LoadController)
-        self.list_srv = rospy.ServiceProxy("controller_manager/list_controllers", ListControllers)
+        self.load_srv = rospy.ServiceProxy(self.load_controller_serv_name, LoadController)
+        self.list_srv = rospy.ServiceProxy(self.list_controller_serv_name, ListControllers)
         try:
             self.switch_srv.wait_for_service(timeout.to_sec())
         except rospy.exceptions.ROSException as err:
@@ -143,7 +160,6 @@ class TrajectoryClient:
     def send_joint_trajectory(self):
 ######################################################################################################################################################################################################################################################
 
-
         '''ROS dashboard service and client is being used to perform robot action such as play, load different program, power on, power off and pause program etc.'''
 
         '''check if the robot is in remote mode, if not, then raise a message.
@@ -153,19 +169,17 @@ class TrajectoryClient:
         '''
         # # External called first to perform xml file gathering
         # self.dashboard.load_program(program_names['external'])
-
-        self.load_program.load(file_name = self.program_names['external'])
-        self.start_program.play()
+        self.pickAndPlace_load_program.load(file_name = program_names['external'])
+        self.pickAndPlace_start_program.play()
         # how to check if a program has completed?
         time.sleep(10)
-
 ########################################################################################################################################################################################################################################################################################################################################
-
         """Creates a trajectory and sends it using the selected action server"""
         # make sure the correct controller is loaded and activated
         self.switch_controller(self.joint_trajectory_controller)
         trajectory_client = actionlib.SimpleActionClient(
-            "{}/follow_joint_trajectory".format(self.joint_trajectory_controller),
+            # "{}/follow_joint_trajectory".format(self.joint_trajectory_controller),
+            "{}/{}/follow_joint_trajectory".format( self.robot_name,self.joint_trajectory_controller),
             FollowJointTrajectoryAction,
         )
 
@@ -235,22 +249,21 @@ class TrajectoryClient:
 
         # only save file if success
         if result.error_code == r.SUCCESSFUL:
-            # self.pause_robot.connect()
+            # self.pause_robot.call_service()
             # save to file
-            self.stop_program.connect()
+            self.pickAndPlace_stop_program.call_service()
             file = XML_FILES_2(input('GET ROBOT INFORMATION!!!!'))
             file.generate_xml()
 
-# # ------------------------------------------------------------------------------------------------------------------------------------------
-#         # dashb
-#         # load and play a different program
-            self.load_program.load(file_name = self.program_names['test'])
-            self.start_program.play()
+# # ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            # load and play a different program
+            self.pickAndPlace_load_program.load(file_name = program_names['test'])
+            self.pickAndPlace_start_program.play()
+            # play for 5 seconds then stop prgram
             time.sleep(5)
-            self.stop_program.connect()
-            
-            # ------------------------------------------------------------------------------------------------------------------------------------------
-########################################################################################################
+            self.pickAndPlace_stop_program.call_service()
+# # ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    '''Need to make sure the action is calling the right robot!'''
 
     def send_cartesian_trajectory(self):
         """Creates a Cartesian trajectory and sends it using the selected action server"""
@@ -408,10 +421,19 @@ class TrajectoryClient:
 if __name__ == "__main__":
 
     client = TrajectoryClient()
-    power_on =Dashboard_Client('power_on', Trigger, TriggerRequest())
-    brake_release =Dashboard_Client('brake_release', Trigger, TriggerRequest())
-    power_on.connect()
-    brake_release.connect()
+
+    '''To turn on both robot and release the brake'''
+    d_power_on =Dashboard_Client('power_on', Trigger, TriggerRequest(),'d')
+    d_power_on.call_service()
+
+    p_power_on =Dashboard_Client('power_on', Trigger, TriggerRequest(),'p')
+    p_power_on.call_service()
+
+    d_brake_release =Dashboard_Client('brake_release', Trigger, TriggerRequest(),'d')
+    d_brake_release.call_service()
+
+    p_brake_release =Dashboard_Client('brake_release', Trigger, TriggerRequest(),'p')
+    p_brake_release.call_service()
     # The controller choice is obviously not required to move the robot. It is a part of this demo
     # script in order to show all available trajectory controllers.
 

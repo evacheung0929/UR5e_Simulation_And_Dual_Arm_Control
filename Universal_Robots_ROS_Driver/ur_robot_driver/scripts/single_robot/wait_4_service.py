@@ -1,11 +1,6 @@
-#!/usr/bin/env python
-import rospy
-from ur_dashboard_msgs.srv import Load, LoadRequest, Popup, PopupRequest, IsInRemoteControl,IsInRemoteControlRequest, GetRobotMode, GetRobotModeRequest
-from std_srvs.srv import Trigger, TriggerRequest
-import time
-from Timer import Time_Out_Check
-# from testService.srv import NoArguments
 '''This program is used to connect to the Dsashboard services fro provided message type, either from the std_srvs.srv (Trigger) or from the ur_dashboard_msgs.srv (UR Dashboard)
+
+The dahsbaord commands are on the ROS service and can be activated through connecting to the corresponding service
 
 For more details of which service was being used here: https://github.com/UniversalRobots/Universal_Robots_ROS_Driver/blob/master/ur_robot_driver/doc/ROS_INTERFACE.md
 
@@ -28,7 +23,15 @@ http://docs.ros.org/api/std_srvs/html/srv/Trigger.html
 https://github.com/UniversalRobots/Universal_Robots_ROS_Driver/blob/master/ur_robot_driver/doc/ROS_INTERFACE.md
 https://github.com/UniversalRobots/Universal_Robots_ROS_Driver/tree/98e0d87234cdbd75736c0a30b817cd4ec34bc469/ur_dashboard_msgs 
 
-'''
+'''#!/usr/bin/env python
+
+# import all the relavent libraries and service messages that is relevant in obtaining the dahsboard result
+import rospy
+from ur_dashboard_msgs.srv import Load, LoadRequest, Popup, PopupRequest, IsInRemoteControl,IsInRemoteControlRequest, GetRobotMode, GetRobotModeRequest
+from std_srvs.srv import Trigger, TriggerRequest
+import time
+from Timer import Time_Out_Check
+
 class Dashboard_Client:
     def __init__(self, service_str_name,  Msg_Name, Msg_Request):
         self.service_general_name = '/ur_hardware_interface/dashboard/'

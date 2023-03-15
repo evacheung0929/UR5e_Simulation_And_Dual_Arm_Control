@@ -9,10 +9,9 @@
 
    <!-- world environment .xacro if we have one -->
   <link name="world" />
-
   <joint name="world_to_dispense" type="fixed">
     <parent link="world" />
-    <child link = "dispense_base_link" />
+    <child link = "$(arg prefix)base_link" />
     <origin xyz="-1.5 0 0" rpy="0.0 0.0 0.0" />
   </joint>
 

@@ -2,7 +2,7 @@
 <launch>
 
   <arg name="debug" default="false" doc="Debug flag that will get passed on to ur_common.launch"/>
-  <arg name="prefix" default="" doc="prefix used for the robot."/>
+  <arg name="prefix" default="ppppp" doc="prefix used for the robot."/>
   <arg name="tf_prefix" default="" doc="tf_prefix used for the robot."/>
   <arg name="robot_ip" default ="192.168.1.25" doc="IP address by which the robotS can be reached."/>
 
@@ -11,7 +11,9 @@
   <arg name="script_sender_port" default="50002" doc="The driver will offer an interface to receive the program's URScript on this port. If the robot cannot connect to this port, `External Control` will stop immediately."/>
   <arg name="trajectory_port" default="50003" doc="Port that will be opened by the driver to allow trajectory forwarding."/>
   <arg name="script_command_port" default="50004" doc="Port that will be opened by the driver to allow forwarding script commands to the robot."/>
-  <arg name="robot_description_file" default="$(find ur_description)/launch/load_dual_ur5e.launch" doc="Robot description launch file."/>
+ <!-- <arg name="robot_description_file" default="$(find ur_description)/launch/load_dual_ur5e.launch" doc="Robot description launch file."/> -->
+
+  <arg name="robot_description_file" default="$(find ur_description)/launch/load_ur5e_pp.launch" doc="Robot description launch file."/> 
 
 
   <arg name="controllers" default="joint_state_controller scaled_pos_joint_traj_controller speed_scaling_state_controller force_torque_sensor_controller" doc="Controllers that are activated by default."/>
@@ -19,7 +21,11 @@
   <arg name="controller_config_file" default="$(find ur_robot_driver)/config/ur5e_controllers.yaml" doc="Config file used for defining the ROS-Control controllers."/>
 
 
-  <arg name="robot_description_file" default="$(find ur_description)/launch/load_ur5e.launch" doc="Robot description launch file."/>
+  <!--<arg name="robot_description_file" default="$(find ur_description)/launch/load_ur5e.launch" doc="Robot description launch file."/>
+
+-->
+
+
   <arg name="kinematics_config" default="$(find ur_description)/config/ur5e/kinematic_pick_and_place.yaml" doc="Kinematics config file used for calibration correction. This will be used to verify the robot's calibration is matching the robot_description."/> 
   <arg name="use_tool_communication" default="false" doc="On e-Series robots tool communication can be enabled with this argument"/>
   <arg name="tool_voltage" default="0" doc="Tool voltage set at the beginning of the UR program. Only used, when `use_tool_communication` is set to true."/>
@@ -32,8 +38,6 @@
   <arg name="tool_tcp_port" default="54321" doc="Port on which the robot controller publishes the tool comm interface. Only used, when `use_tool_communication` is set to true."/>
   <arg name="headless_mode" default="false" doc="Automatically send URScript to robot to execute. On e-Series this does require the robot to be in 'remote-control' mode. With this, the URCap is not needed on the robot."/>
   <arg name="ur_hardware_interface_node_required" default="true" doc="Shut down ros environment if ur_hardware_interface-node dies."/> 
-
-
 
 
 <!-- Default port num here 
