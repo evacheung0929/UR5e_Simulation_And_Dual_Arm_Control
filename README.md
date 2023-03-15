@@ -1,4 +1,4 @@
-# UR5_ROS_Simulation
+# UR5e_ROS_Simulation + Dual_Arm_Control
 This repository summarises my learning of Universal Robot from simulation to actual robot connection using ROS, Dashboard and ur_rtde. It's a working process, so stay tunned!
 
 #### **Goal**: UR5e Pick and place simulation + real-robot motion planning with screwdriver & customised Airpick.
