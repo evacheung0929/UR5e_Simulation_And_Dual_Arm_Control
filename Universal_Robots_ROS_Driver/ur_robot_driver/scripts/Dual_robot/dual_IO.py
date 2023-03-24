@@ -29,16 +29,21 @@ class Digital_IO:
     def __init__(self, robot_name):
         '''The service name can eitherbe 'p' or 'd', representing pick and palce robot and dispense robot service name'''
         robot = Robot()
-        service_action_name = 'set_io'
-        self.service_name = robot.name(robot_name, service_action_name)
+        service_action_name = '/set_io'
+        self.service_name = robot.hardware_int_srv(robot_name, service_action_name)
+        # print(self.service_name)
+
         rospy.wait_for_service(self.service_name,  timeout=3)
         self.client = rospy.ServiceProxy(self.service_name, SetIO)
         self.request = SetIORequest()
+        # function 1 = digtal output
         self.request.fun = 1
+
     def digital_on(self, pin_num):
         self.request.pin = pin_num
-        self.request.state = 1
+        self.request.state = 24
         result = self.client(self.request)
+        print(result)
         return result
     def digital_off(self, pin_num):
         self.request.pin = pin_num
@@ -46,7 +51,15 @@ class Digital_IO:
         result = self.client(self.request)
         return result
 
-# io_control = Digital_IO()
+# io_control_p = Digital_IO('p')
+# turnon = io_control_p.digital_on(3)
+
+# if turnon.success:
+#     print(turnon.success)
+#     time.sleep(5)
+#     io_control_d = Digital_IO('d')
+#     io_control_d.digital_on(0)
+# io_control.digital_off(1)
 # io_control.digital_on(2)
 # time.sleep(2)
 # io_control.digital_off(1)

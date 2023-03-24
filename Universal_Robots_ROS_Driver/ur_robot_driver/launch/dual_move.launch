@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+
+  <node pkg="my_package" type="simplified_dual_move_d.py" name="dispense_moving"  output="screen"> </node>
+
+  <node pkg="ur_robot_driver" type="simplified_dual_move_p.py" name="pp_moving"  output="screen"> </node>
+
+</launch>

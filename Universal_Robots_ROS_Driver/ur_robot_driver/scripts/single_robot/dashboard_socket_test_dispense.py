@@ -50,7 +50,7 @@ class Dasboard_Server:
         time.sleep(0.5)
         data = sock.recv(1024)      
 
-robot_ip = "192.168.1.25"
+robot_ip = "192.168.1.30"
 d = Dasboard_Server(robot_ip, 29999)
 d.connection()
 d.power_on_and_brake_release()

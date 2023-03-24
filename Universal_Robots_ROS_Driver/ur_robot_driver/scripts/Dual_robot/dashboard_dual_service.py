@@ -46,11 +46,13 @@ class Dashboard_Client:
         use the "self.robot" to determine which robot will be called
         '''
         self.robot = Robot()
-        self.service_name = self.robot.name(robot_name,service_str_name)
+        self.service_str_name = '/' + service_str_name
+        print(self.service_str_name)
+        self.service_name = self.robot.dashboard_srv_name(robot_name,self.service_str_name)
         self.time_out_check = Time_Out_Check()
         self.Msg_Name = Msg_Name
         self.Msg_Request = Msg_Request
-        self.service_str_name = service_str_name
+
 
         # indicate the service name corresponding to the robot name
         print(self.service_name)
@@ -88,16 +90,16 @@ class Dashboard_Client:
 
         As this fucntion is used solely to check if 'play' can be executed, the message name and type doesn't need to be called using class
         '''
-        robot_serv_name = 'get_robot_mode'
+        srv_action = '/get_robot_mode'
+        # robot_serv_name = 'get_robot_mode'
         if self.robot.dispense_robot_on:
-            print('dispense activated')
-            srv_action = 'get_robot_mode'
-            serv_name = self.robot.name('d', srv_action)
+            print('dispense robot chosen')
+            serv_name = self.robot.dashboard_srv_name('d', srv_action)
         elif self.robot.pick_robot_on:
-            print('pick activated')
-            serv_name = self.robot.name('p', srv_action)
+            print('pick robot chosen')
+            serv_name = self.robot.dashboard_srv_name('p', srv_action)
 
-        mode_client = rospy.ServiceProxy(robot_serv_name,GetRobotMode)
+        mode_client = rospy.ServiceProxy(serv_name,GetRobotMode)
         request = GetRobotModeRequest()
         mode_result = mode_client(request)
         # self.tout(result)
@@ -125,11 +127,23 @@ class Dashboard_Client:
         self.return_result()
 
 
-is_remote_check = Dashboard_Client('is_in_remote_control', IsInRemoteControl, IsInRemoteControlRequest(), 'd')
-is_remote_check.call_service()
+# disconnect first
+# d_connect = Dashboard_Client('quit', Trigger, TriggerRequest(), 'd')
+# call = d_connect.call_service()
+# r = d_connect.return_result()
+# print(r.success)
 
-power_on =Dashboard_Client('power_on', Trigger, TriggerRequest(),'p')
-power_on.call_service()
+# p_connect = Dashboard_Client('quit', Trigger, TriggerRequest(), 'p')
+# p_connect.call_service()   
+
+# d_connect = Dashboard_Client('connect', Trigger, TriggerRequest(), 'd')
+# d_connect.call_service()
+
+# is_remote_check = Dashboard_Client('is_in_remote_control', IsInRemoteControl, IsInRemoteControlRequest(), 'd')
+# is_remote_check.call_service()
+
+# power_on =Dashboard_Client('power_on', Trigger, TriggerRequest(),'p')
+# power_on.call_service()
 # brake_release =Dashboard_Client('brake_release', Trigger, TriggerRequest())
 # brake_release.connect()
 
@@ -148,5 +162,5 @@ power_on.call_service()
 
 # # pause.connect()
 
-# stop =Dashboard_Client('stop', Trigger, TriggerRequest())
-# stop.connect()
+# stop =Dashboard_Client('stop', Trigger, TriggerRequest(),'p')
+# stop.call_service()
