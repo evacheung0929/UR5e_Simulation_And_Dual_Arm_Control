@@ -95,4 +95,4 @@ be in **remote_control_mode** as explained above.
 
 
 
-The folder script contain all the python script for the single/dual robot control
+# The folder script contain all the python script for the single/dual robot control
