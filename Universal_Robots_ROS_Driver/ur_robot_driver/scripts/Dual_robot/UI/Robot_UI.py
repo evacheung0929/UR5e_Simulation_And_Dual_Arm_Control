@@ -34,8 +34,18 @@ class Ui_RobotControl(object):
 
     def power_on_robot(self, robot_name):
         power_on = Dashboard_Client('power_on', Trigger, TriggerRequest(), robot_name)
+        brake_release = Dashboard_Client('brake_release', Trigger, TriggerRequest(), robot_name)
         power_on.call_service()
-    
+        brake_release.call_service()
+
+    def stop_program(self, robot_name):
+        stop = Dashboard_Client('stop', Trigger, TriggerRequest(), robot_name)
+        stop.call_service()
+
+    def pause_program(self, robot_name):
+        pause = Dashboard_Client('pause', Trigger, TriggerRequest(), robot_name)
+        pause.call_service()
+
     def load_program(self, robot_name, file_name):
         if robot_name.lower() =='p':
             programe_name = {'external':'external_control'}
@@ -924,8 +934,6 @@ class Ui_RobotControl(object):
         self.LoadProgram_2 = QtWidgets.QPushButton(self.gridLayoutWidget, clicked = lambda: self.load_program_window())
         # self.LoadProgram_2 = QtWidgets.QPushButton(self.gridLayoutWidget)
 
-    # play_robot('play',Trigger, TriggerRequest())
-
 
         font = QtGui.QFont()
         font.setPointSize(11)
@@ -934,23 +942,27 @@ class Ui_RobotControl(object):
         self.verticalLayout_4.addWidget(self.LoadProgram_2)
         self.Play_pp_3 = QtWidgets.QPushButton(self.gridLayoutWidget, clicked = lambda: self.play_robot(robot_name=''))
         
-        if self.Play_pp_3.isChecked:
-            print('clicked')
+        # if self.Play_pp_3.isChecked:
+        #     print('clicked')
             # self.Play_pp_3.setStyleSheet("background-color: rgb(73, 221, 0);")
- 
-        
+      
         font = QtGui.QFont()
         font.setPointSize(11)
         self.Play_pp_3.setFont(font)
         self.Play_pp_3.setObjectName("Play_pp_3")
         self.verticalLayout_4.addWidget(self.Play_pp_3)
-        self.Pause_pp_2 = QtWidgets.QPushButton(self.gridLayoutWidget)
+        self.Pause_pp_2 = QtWidgets.QPushButton(self.gridLayoutWidget, clicked = lambda: self.pause_program(robot_name=''))
+
+
         font = QtGui.QFont()
         font.setPointSize(11)
         self.Pause_pp_2.setFont(font)
         self.Pause_pp_2.setObjectName("Pause_pp_2")
         self.verticalLayout_4.addWidget(self.Pause_pp_2)
-        self.Stop_pp_2 = QtWidgets.QPushButton(self.gridLayoutWidget)
+        self.Stop_pp_2 = QtWidgets.QPushButton(self.gridLayoutWidget, clicked = lambda: self.stop_program(robot_name=''))
+
+
+
         font = QtGui.QFont()
         font.setPointSize(11)
         self.Stop_pp_2.setFont(font)
