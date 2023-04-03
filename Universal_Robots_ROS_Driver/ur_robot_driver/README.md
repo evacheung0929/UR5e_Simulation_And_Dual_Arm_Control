@@ -92,3 +92,7 @@ execution without the teach pendant. The **headless** mode might be removed in f
 
 **Note for the e-Series:** In order to leverage the **headless** mode on the e-Series the robot must
 be in **remote_control_mode** as explained above.
+
+
+
+The folder script contain all the python script for the single/dual robot control
