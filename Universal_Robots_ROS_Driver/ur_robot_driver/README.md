@@ -1,3 +1,6 @@
+
+# The folder script contain all the python script for the single/dual robot control
+
 # ur_robot_driver 
 
 This package contains the actual driver for UR robots. It is part of the *universal_robots_driver*
@@ -95,4 +98,3 @@ be in **remote_control_mode** as explained above.
 
 
 
-# The folder script contain all the python script for the single/dual robot control
