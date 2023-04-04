@@ -46,17 +46,7 @@ class Ui_RobotControl(object):
         pause = Dashboard_Client('pause', Trigger, TriggerRequest(), robot_name)
         pause.call_service()
 
-    def load_program(self, robot_name, file_name):
-        if robot_name.lower() =='p':
-            programe_name = {'external':'external_control'}
-        elif robot_name.lower() =='d':
-            programe_name = {'external':'external_control'}
-        elif robot_name =='':
-            programe_name={'test':'external_test', 'external':'external_control'}
-        
-        load_prog = Dashboard_Client('load_program', Load, LoadRequest())
-        load_prog.load(file_name = programe_name[file_name])
-    
+
     def play_robot(self, robot_name):
         if robot_name.lower() =='p':
             self.p_robot.play()
