@@ -32,7 +32,7 @@ https://github.com/UniversalRobots/Universal_Robots_ROS_Driver/tree/98e0d87234cd
 '''
 # import all the relavent libraries and service messages that is relevant in obtaining the dahsboard result
 import rospy
-from ur_dashboard_msgs.srv import Load, LoadRequest, Popup, PopupRequest, IsInRemoteControl,IsInRemoteControlRequest, GetRobotMode, GetRobotModeRequest
+from ur_dashboard_msgs.srv import Load, LoadRequest, RawRequestRequest, RawRequest,Popup, PopupRequest, IsInRemoteControl,IsInRemoteControlRequest, GetRobotMode, GetRobotModeRequest, IsProgramRunning, IsProgramRunningRequest
 from std_srvs.srv import Trigger, TriggerRequest
 import time
 from Timer import Time_Out_Check
@@ -47,12 +47,13 @@ class Dashboard_Client:
         '''
         self.robot = Robot()
         self.service_str_name = '/' + service_str_name
-        print(self.service_str_name)
-        self.service_name = self.robot.dashboard_srv_name(robot_name,self.service_str_name)
+        # print(self.service_str_name)
+        # print(self.service_str_name)
+        self.robot_name = robot_name
+        self.service_name = self.robot.dashboard_srv_name(self.robot_name,self.service_str_name)
         self.time_out_check = Time_Out_Check()
         self.Msg_Name = Msg_Name
         self.Msg_Request = Msg_Request
-
 
         # indicate the service name corresponding to the robot name
         print(self.service_name)
@@ -62,9 +63,18 @@ class Dashboard_Client:
     def connect(self):
         ''' Connecting to the service & check if the service is connected, using its message type
         e.g. client =rospy.ServiceProxy(self.service_name, Load)'''
-        rospy.wait_for_service(self.service_name)
+        rospy.wait_for_service(self.service_name, timeout=5)
         self.client = rospy.ServiceProxy(self.service_name, self.Msg_Name)
         self.request = self.Msg_Request
+
+    def connect_internal(self, srv_name, msg, req):
+        ''' Connecting to the service & check if the service is connected, using its message type
+        e.g. client =rospy.ServiceProxy(self.service_name, Load)'''
+        rospy.wait_for_service(srv_name)
+        client = rospy.ServiceProxy(srv_name, msg)
+        # time.sleep(1)
+        result = client(req)
+        return result
 
     def return_result(self):
         result  = self.client(self.request)  
@@ -75,6 +85,7 @@ class Dashboard_Client:
     def call_service(self):
         self.connect()
         self.return_result()
+
     def load(self, file_name):
         self.connect()
         self.request.filename = file_name+'.urp'
@@ -91,20 +102,12 @@ class Dashboard_Client:
         As this fucntion is used solely to check if 'play' can be executed, the message name and type doesn't need to be called using class
         '''
         srv_action = '/get_robot_mode'
-        # robot_serv_name = 'get_robot_mode'
-        if self.robot.dispense_robot_on:
-            print('dispense robot chosen')
-            serv_name = self.robot.dashboard_srv_name('d', srv_action)
-        elif self.robot.pick_robot_on:
-            print('pick robot chosen')
-            serv_name = self.robot.dashboard_srv_name('p', srv_action)
+        serv_name = self.robot.dashboard_srv_name(self.robot_name, srv_action)
+        mode_result = self.connect_internal(serv_name, GetRobotMode, GetRobotModeRequest())
 
-        mode_client = rospy.ServiceProxy(serv_name,GetRobotMode)
-        request = GetRobotModeRequest()
-        mode_result = mode_client(request)
         # self.tout(result)
-        print('==========')
-        print(mode_result)
+        # print('==========')
+        # print(mode_result)
         return mode_result.answer
     
     def play(self):
@@ -116,16 +119,43 @@ class Dashboard_Client:
         }
         robot_status_check = self.robot_mode()
         print('===========')
+
+        if robot_status_check == status['OFF']:
+            # power on the robot & brake release
+            power_on = self.robot.dashboard_srv_name(self.robot_name, '/power_on')
+            self.connect_internal(power_on, Trigger, TriggerRequest()) 
+
+            brake_release = self.robot.dashboard_srv_name(self.robot_name, '/brake_release')
+            self.connect_internal(brake_release, Trigger, TriggerRequest()) 
+
         # print(status['RUNNING'])
         while robot_status_check != status['RUNNING']:
             robot_status_check = self.robot_mode()
             time.sleep(1)
             print('The current mode is in: {}'.format(robot_status_check))
-        rospy.loginfo('Starting program!')
-        print('starting program!!')
-        self.connect()
-        self.return_result()
+        # rospy.loginfo('Starting program!')
+        # print('starting program!!')
+        serv_name = self.robot.dashboard_srv_name(self.robot_name, '/play')
+        # print(serv_name)
+        r = self.connect_internal(serv_name, Trigger, TriggerRequest())
+        return r
 
+    def program_runing(self):
+        program_running_srv_name = '/program_running'
+        serv_name = self.robot.dashboard_srv_name(self.robot_name, program_running_srv_name)
+        result = self.connect_internal(serv_name, IsProgramRunning, IsProgramRunningRequest())
+        # print(result.answer)
+        return result.program_running
+    
+        # program_running_srv_name = '/raw_request'
+        # serv_name = self.robot.dashboard_srv_name(self.robot_name, program_running_srv_name)
+        # client = rospy.ServiceProxy(serv_name, RawRequest)
+        # request = RawRequestRequest()
+        # request.query = 'running'
+        # result = client(request)
+        # print(result.answer)
+
+        # return result
 
 # disconnect first
 # d_connect = Dashboard_Client('quit', Trigger, TriggerRequest(), 'd')
@@ -139,22 +169,40 @@ class Dashboard_Client:
 # d_connect = Dashboard_Client('connect', Trigger, TriggerRequest(), 'd')
 # d_connect.call_service()
 
+
+
 # is_remote_check = Dashboard_Client('is_in_remote_control', IsInRemoteControl, IsInRemoteControlRequest(), 'd')
 # is_remote_check.call_service()
 
-# power_on =Dashboard_Client('power_on', Trigger, TriggerRequest(),'p')
+power_on = Dashboard_Client('power_on', Trigger, TriggerRequest(),'')
+# power_on.robot_mode()
+# power_on.play()
+power_on.program_runing()
+# power_on.program_runing()
 # power_on.call_service()
+
+
 # brake_release =Dashboard_Client('brake_release', Trigger, TriggerRequest())
 # brake_release.connect()
 
+# simulation_connect = Dashboard_Client('connect', Trigger, TriggerRequest(), '')
+# simulation_connect.call_service()
 
 # program_name = {'external':'external_control', 'pcb_pick_and_place':'pcb', 'test':'testing'}
-# load_program = Dashboard_Client('load_program', Load, LoadRequest())
-# load_program.load(file_name = program_name['external'])
+# load_program = Dashboard_Client('load_program', Load, LoadRequest(),'')
+# load_program.load(file_name = 'new_tube_start')
+# load_program.load(file_name = '1')
 
-# play = Dashboard_Client('play', Trigger, TriggerRequest())
+# play = Dashboard_Client('play', Trigger, TriggerRequest(),'')
 # play.play()
-# # play.connect()
+
+# while play.program_runing():
+#     print('pasting')
+#     time.sleep(2)
+
+# load_program.load(file_name = '1')
+# play.play()
+
 
 
 # time.sleep(5)       

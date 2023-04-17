@@ -70,13 +70,13 @@ class Load_Program_Window(QWidget):
         # self.program_button_test()
         self.load_program(robot_name='')
 
-    # def program_button_test(self, program_name):
-    #     # program_name = {'test':'external_test', 'external':'external_control'}
-    #     for i in program_name:
-    #         button = QPushButton(program_name[i],clicked = lambda: print('hey')) # 
-    #         self.layout.addWidget(button)
+    def program_button_test(self, program_name):
+        # program_name = {'test':'external_test', 'external':'external_control'}
+        for i in program_name:
+            button = QPushButton(program_name[i],clicked = lambda: print('hey')) # 
+            self.layout.addWidget(button)
 
-    # def load(self, robot_name, file_name):
+    def load(self, robot_name, file_name):
         '''Basic example of how load program is implemented without integrating it into UI'''
         if robot_name.lower() =='p':
             programe_name = {'external':'external_control'}
@@ -98,11 +98,11 @@ class Load_Program_Window(QWidget):
             programe_name={'test':'external_test', 'external':'external_control'}
         
         for i in programe_name:
-            load_prog = Dashboard_Client('load_program', Load, LoadRequest(),'')
-            l = load_prog.load(programe_name[i])
+            # load_prog = Dashboard_Client('load_program', Load, LoadRequest(),'')
+            # l = load_prog.load(programe_name[i])
             button = QPushButton(programe_name[i] ) # clicked = (lambda x: print(programe_name[i]))
             button.clicked.connect(lambda b, i=i:print(f"{programe_name[i]} program has been selected"))
-            button.clicked.connect(lambda b, i=i:l)
+            # button.clicked.connect(lambda b, i=i:l)
             self.layout.addWidget(button)
 
 if __name__ == '__main__':        

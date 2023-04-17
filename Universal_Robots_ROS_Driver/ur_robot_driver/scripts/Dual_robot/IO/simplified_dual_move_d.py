@@ -28,7 +28,7 @@ dispense_program_name = {'empty_paste':'empty_dry_paste', 'start_pasting':'inita
 
 class Dual_Move:
     def __init__(self):
-        rospy.init_node("test_move")
+        rospy.init_node("idkidk")
         # io contorl for piack and place + dispense robot
         # turnon = pick_IO_control.digital_on(3)
         # can stream pin state via subscribing to the namespace/iostate
@@ -60,25 +60,15 @@ class Dual_Move:
     def d_load(self, program_n):
         self.dispense_load_program.load(file_name = dispense_program_name[program_n])
     def d_play(self):
-        self.pickAndPlace_start_program.play()
+        self.dispense_start_program.play()
         # to pause after the play command being sent, as the controllers may not be ready just yet?
         time.sleep(5)
 
-    # def pp_stop_program(self):
-    #     self.pickAndPlace_stop_program.call_service()
-    #     file = XML_FILES_2(input('GET ROBOT INFORMATION!!!!'))
-    #     file.generate_xml()
+    def pp_stop_program(self):
+        self.pickAndPlace_stop_program.call_service()
+        file = XML_FILES_2(input('GET ROBOT INFORMATION!!!!'))
+        file.generate_xml()
 
-    def run_first_pp_program(self):
-        ''' Waiting for pick and place output signal to be true to start pasting
-        If the io status of pin 3 on pick and place robot is true, meaning the robot had moved away 
-        & ready to start pasting
-        '''
-        self.pp_load('test')
-        self.pp_play()
-        # listening to pp robot pin 3
-        IO_Status(3).listening_to_p_io()
-    
     def run_first_pp_program(self):
         ''' Waiting for pick and place output signal to be true to start pasting
         If the io status of pin 3 on pick and place robot is true, meaning the robot had moved away 
@@ -104,17 +94,22 @@ dual_robot = Dual_Move()
 # p_connect.call_service()
 
 '''To turn on both robot and release the brake'''
-# d_power_on =Dashboard_Client('power_on', Trigger, TriggerRequest(),'d')
-# d_power_on.call_service()
+d_power_on =Dashboard_Client('power_on', Trigger, TriggerRequest(),'d')
+d_power_on.call_service()
 
-p_power_on =Dashboard_Client('power_on', Trigger, TriggerRequest(),'p')
-p_power_on.call_service()
+# p_power_on =Dashboard_Client('power_on', Trigger, TriggerRequest(),'p')
+# p_power_on.call_service()
 
-# d_brake_release =Dashboard_Client('brake_release', Trigger, TriggerRequest(),'d')
-# d_brake_release.call_service()
+d_brake_release =Dashboard_Client('brake_release', Trigger, TriggerRequest(),'d')
+d_brake_release.call_service()
 
-p_brake_release =Dashboard_Client('brake_release', Trigger, TriggerRequest(),'p')
-p_brake_release.call_service()
+# p_brake_release =Dashboard_Client('brake_release', Trigger, TriggerRequest(),'p')
+# p_brake_release.call_service()
 
-dual_robot.run_first_pp_program()
+'''While true, keep listening to DOut[0] at pick and place robot. 
 
+    Pasting will start when Dout[0] is activated
+    - Dout[7] activated (maybe redundant)
+'''
+
+dual_robot.run_d_program()

@@ -23,12 +23,6 @@ class Dasboard_Server:
         sock = self.connection()
         sock.send(content[0])
         data = sock.recv(1024)
-        # for i in range(len(content)):
-        #     sock.send(content[i])
-        #     time.sleep(0.5)
-        # # .recv = read incoming data on the socket
-        #     data = sock.recv(1024)
-        #     print(data)
         sock.close()
 
     def play(self):

@@ -31,7 +31,9 @@ class Robot:
         elif robot_name.lower() == 'd':
             self.dispense_robot_on = True
             self.pick_robot_on = False
-            service_name =  self.disp_dashboard + srv_name        
+            service_name =  self.disp_dashboard + srv_name       
+        elif robot_name == '':
+                service_name = self.service_general_name+'/dashboard'+srv_name
         else:
             raise ValueError('The provided robot name does not exist, please enter either "p" or "d" to indcate which robot you are referring to')
 

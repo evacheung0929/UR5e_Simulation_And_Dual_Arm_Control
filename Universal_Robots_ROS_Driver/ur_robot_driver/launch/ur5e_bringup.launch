@@ -10,7 +10,7 @@
   <arg name="script_sender_port" default="50002" doc="The driver will offer an interface to receive the program's URScript on this port. If the robot cannot connect to this port, `External Control` will stop immediately."/>
   <arg name="trajectory_port" default="50003" doc="Port that will be opened by the driver to allow trajectory forwarding."/>
   <arg name="script_command_port" default="50004" doc="Port that will be opened by the driver to allow forwarding script commands to the robot."/>
-  <arg name="robot_description_file" default="$(find ur_description)/launch/load_dual_ur5e.launch" doc="Robot description launch file."/>
+  <arg name="robot_description_file" default="$(find ur_description)/launch/load_ur5e.launch" doc="Robot description launch file."/>
 
   <arg name="prefix" default="" doc="prefix used for the robot."/>
   <arg name="tf_prefix" default="" doc="tf_prefix used for the robot."/>
@@ -37,20 +37,3 @@
   <include file="$(find ur_robot_driver)/launch/ur_common.launch" pass_all_args="true" />
 </launch>
 
-
-  <!-- 
-  <arg name="debug" default="false" doc="Debug flag that will get passed on to ur_common.launch"/>
-  <arg name="kinematics_config" default="$(find ur_description)/config/ur5e/default_kinematics.yaml" doc="Kinematics config file used for calibration correction. This will be used to verify the robot's calibration is matching the robot_description."/> 
-
-  <arg name="reverse_port" doc="Port that will be opened by the driver to allow direct communication between the driver and the robot controller."/>
-  <arg name="script_sender_port" doc="The driver will offer an interface to receive the program's URScript on this port. If the robot cannot connect to this port, `External Control` will stop immediately."/>
-  <arg name="trajectory_port" doc="Port that will be opened by the driver to allow trajectory forwarding."/>
-  <arg name="script_command_port" doc="Port that will be opened by the driver to allow forwarding script commands to the robot."/>
-  <arg name="robot_ip" doc="IP address by which the robotS can be reached."/>
-
-
-
-  <arg name="kinematics_config_filename" default="kinematic_pick_and_place" />
-  <arg name="kinemetics_config_path" default="$(find ur_description)/config/ur5e/$(arg kinematics_config_filename).yaml"/>
-  <arg name="kinematics_config" default="$arg kinemetics_config_path)" doc="Kinematics config file used for calibration correction. This will be used to verify the robot's calibration is matching the robot_description."/>
---> 

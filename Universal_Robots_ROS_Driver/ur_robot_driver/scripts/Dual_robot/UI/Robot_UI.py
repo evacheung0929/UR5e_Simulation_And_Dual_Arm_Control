@@ -7,6 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import *
 from Window2 import Load_Program_Window
 from dashboard_dual_service_2 import Dashboard_Client
 import rospy
@@ -27,10 +28,13 @@ class Ui_RobotControl(object):
            - get all the ui setup of the second window
            - show the ui
         '''
-        self.window = QtWidgets.QMainWindow()
-        self.ui = Load_Program_Window()
-        self.ui.setupUi(self.window)
-        self.window.show()
+        # self.window = QtWidgets.QMainWindow()
+        self.window = QApplication([])
+        self.load = Load_Program_Window()
+        self.load.show()
+        self.window.exec_()
+        # self.ui.setupUi(self.window)
+        # self.window.show()
 
     def power_on_robot(self, robot_name):
         power_on = Dashboard_Client('power_on', Trigger, TriggerRequest(), robot_name)
