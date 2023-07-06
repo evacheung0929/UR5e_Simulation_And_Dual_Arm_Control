@@ -15,8 +15,6 @@ from ur_dashboard_msgs.srv import Load, LoadRequest, RawRequest,RawRequestReques
 from std_srvs.srv import Trigger, TriggerRequest
 import time
 
-
-
 class Dispense_Program:
     def __init__(self):
         ''' The sub program names on the teach pendant for each dispensing action range from 0 to 14.
@@ -27,13 +25,13 @@ class Dispense_Program:
         for i in self.sub_prog_names:
             self.sub_prog_names[i] = str(i)
         
-    # def start(self):
-    #     ''' This is for the start of the entire program. Will only run once
-    #         e.g. From safety position to the pad 1, would be more useful for the pick and place robot,
-    #         as in the absence of enclosure in assembnly station require extra waiting period for pasting,
-    #         but this only takes place once'''
-    #     prog_name = self.sub_prog_names[0]
-    #     self.dispense.load(file_name=prog_name)
+    def main_start(self):
+        ''' This is for the start of the entire program. Will only run once
+            e.g. From safety position to the pad 1, would be more useful for the pick and place robot,
+            as in the absence of enclosure in assembnly station require extra waiting period for pasting,
+            but this only takes place once'''
+        prog_name = 'new_tube'
+        self.dispense.load(file_name=prog_name)
 
     def start_pasting(self):    
         ''' Load and play every single provided program.
@@ -88,7 +86,8 @@ class Dispense_Program:
             self.dispense.play()
 
 
-''' When the robot is moving while picking up the board
+''' xml thoughts
+    When the robot is moving while picking up the board
     launch a new program/shell to just store the serial number
     
     As the UI will be the only program running at the end, it will be the one that takes
@@ -126,14 +125,11 @@ class Dispense_Program:
 # # print('starting program')
 
 
-
 '''looping throught the program for testing'''
 
-# program = Dispense_Program()
-# program.start_pasting()
+program = Dispense_Program()
+program.start_pasting()
 
 
 '''Pasting correction check'''
-# program.dispense_correction(1,2)
-
-
+program.dispense_correction(1,2)

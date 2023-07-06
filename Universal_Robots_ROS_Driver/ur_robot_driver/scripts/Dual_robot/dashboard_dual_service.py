@@ -35,8 +35,81 @@ import rospy
 from ur_dashboard_msgs.srv import Load, LoadRequest, RawRequestRequest, RawRequest,Popup, PopupRequest, IsInRemoteControl,IsInRemoteControlRequest, GetRobotMode, GetRobotModeRequest, IsProgramRunning, IsProgramRunningRequest
 from std_srvs.srv import Trigger, TriggerRequest
 import time
-from Timer import Time_Out_Check
-from Robot_name import Robot
+import timeit
+
+class Time_Out_Check:
+    def __init__(self):
+        self.start_time = timeit.default_timer()
+        self.duration = timeit.default_timer() - self.start_time
+        self.time_out_limit = 10000
+
+    def time_out(self, result, Msg_Request_Name):
+        while (result.success == False) and (self.time_out_limit > self.duration):
+            self.duration = timeit.default_timer()
+            time.sleep(5)
+            request = Msg_Request_Name
+
+            # raise SystemError(result)
+            print('Switch to Remote control and re-initiate the controller ')
+            raise SystemError(result)
+
+class Robot_Name:
+    ''' Returns the generic service name corresponding to the provided robot name and action name,
+        here action is defined as the name of the command that will be sent to the dashboard.
+    
+        Note, this is for dashboard service only!!! Other services will be coming up lately
+    '''
+    def __init__(self):
+        # the name of the robot is obtained from the previously set up node name (inside package ur_robot_driver/launch/3_dual.launch)
+        # this is the node name/ namespace that is corresponding to each robot
+        # /pickAndPlace_robot/ur_hardware_interface/dashboard/
+
+        self.service_general_name = '/ur_hardware_interface'
+        self.pick_and_place_node = '/pickAndPlace_robot'
+        self.dispense_node = '/dispense_robot'
+
+        self.pp_dashboard = self.pick_and_place_node + self.service_general_name + '/dashboard' 
+        self.disp_dashboard =  self.dispense_node + self.service_general_name +'/dashboard'
+        self.dispense_robot_on = False
+        self.pick_robot_on = False
+
+    def dashboard_srv_name(self, robot_name, srv_name):
+        '''The robot name is referring pickAndPlace robot node and dispense robot node
+            The srv_name is the name of action in the service that we are trying to call, for example 'power_on' or 'set_IO'
+            for the purpose of simplicity, the srv_name is used in dashboard_dual_service
+        '''
+        if robot_name.lower() == 'p':
+            self.dispense_robot_on = False
+            self.pick_robot_on = True
+            service_name = self.pp_dashboard + srv_name
+        elif robot_name.lower() == 'd':
+            self.dispense_robot_on = True
+            self.pick_robot_on = False
+            service_name =  self.disp_dashboard + srv_name       
+        elif robot_name == '':
+                service_name = self.service_general_name+'/dashboard'+srv_name
+        else:
+            raise ValueError('The provided robot name does not exist, please enter either "p" or "d" to indcate which robot you are referring to')
+
+        return service_name
+    
+    def hardware_int_srv(self, robot_name, srv_name):
+        '''The robot name is referring pickAndPlace robot node and dispense robot node
+            The srv_name is the name of action in the service that we are trying to call, for example 'power_on' or 'set_IO'
+            for the purpose of simplicity, the srv_name is used in dashboard_dual_service
+        '''
+        if robot_name.lower() == 'p':
+            self.dispense_robot_on = False
+            self.pick_robot_on = True
+            service_name = self.pick_and_place_node + self.service_general_name + srv_name
+        elif robot_name.lower() == 'd':
+            self.dispense_robot_on = True
+            self.pick_robot_on = False
+            service_name = self.dispense_node + self.service_general_name + srv_name        
+        else:
+            raise ValueError('The provided robot name does not exist, please enter either "p" or "d" to indcate which robot you are referring to')
+
+        return service_name
 
 class Dashboard_Client:
     def __init__(self, service_str_name,  Msg_Name, Msg_Request, robot_name):
@@ -45,7 +118,7 @@ class Dashboard_Client:
         Msg_Name = the message type, e.g. Trigger, Load ...
         use the "self.robot" to determine which robot will be called
         '''
-        self.robot = Robot()
+        self.robot = Robot_Name()
         self.service_str_name = '/' + service_str_name
         # print(self.service_str_name)
         # print(self.service_str_name)
@@ -57,6 +130,7 @@ class Dashboard_Client:
 
         # indicate the service name corresponding to the robot name
         print(self.service_name)
+
     def tout(self, result):
         return self.time_out_check.time_out(result, Msg_Request_Name=self.Msg_Request)
 
@@ -68,8 +142,11 @@ class Dashboard_Client:
         self.request = self.Msg_Request
 
     def connect_internal(self, srv_name, msg, req):
-        ''' Connecting to the service & check if the service is connected, using its message type
-        e.g. client =rospy.ServiceProxy(self.service_name, Load)'''
+        ''' Connecting to the service & check if the service is connected, using its message type.
+            It takes pre-determined msg and srv and service name
+
+        e.g. robot mode and play'''
+
         rospy.wait_for_service(srv_name)
         client = rospy.ServiceProxy(srv_name, msg)
         # time.sleep(1)
@@ -105,9 +182,6 @@ class Dashboard_Client:
         serv_name = self.robot.dashboard_srv_name(self.robot_name, srv_action)
         mode_result = self.connect_internal(serv_name, GetRobotMode, GetRobotModeRequest())
 
-        # self.tout(result)
-        # print('==========')
-        # print(mode_result)
         return mode_result.answer
     
     def play(self):
@@ -120,6 +194,7 @@ class Dashboard_Client:
         robot_status_check = self.robot_mode()
         print('===========')
 
+        '''If the robot is off, then turn it on'''
         if robot_status_check == status['OFF']:
             # power on the robot & brake release
             power_on = self.robot.dashboard_srv_name(self.robot_name, '/power_on')
@@ -128,25 +203,24 @@ class Dashboard_Client:
             brake_release = self.robot.dashboard_srv_name(self.robot_name, '/brake_release')
             self.connect_internal(brake_release, Trigger, TriggerRequest()) 
 
-        # print(status['RUNNING'])
         while robot_status_check != status['RUNNING']:
             robot_status_check = self.robot_mode()
             time.sleep(1)
             print('The current mode is in: {}'.format(robot_status_check))
-        # rospy.loginfo('Starting program!')
-        # print('starting program!!')
+
+        # Play the program now that the robot is running
         serv_name = self.robot.dashboard_srv_name(self.robot_name, '/play')
-        # print(serv_name)
         r = self.connect_internal(serv_name, Trigger, TriggerRequest())
         return r
 
     def program_runing(self):
+        '''Return True or False for whether the robot is currently running a program'''
         program_running_srv_name = '/program_running'
         serv_name = self.robot.dashboard_srv_name(self.robot_name, program_running_srv_name)
         result = self.connect_internal(serv_name, IsProgramRunning, IsProgramRunningRequest())
-        # print(result.answer)
         return result.program_running
     
+        # A different way of achieving the same thing
         # program_running_srv_name = '/raw_request'
         # serv_name = self.robot.dashboard_srv_name(self.robot_name, program_running_srv_name)
         # client = rospy.ServiceProxy(serv_name, RawRequest)
@@ -157,29 +231,34 @@ class Dashboard_Client:
 
         # return result
 
-# disconnect first
+'''Examples for testing the connection of the connection'''
+
+# Simulation
+
+# power_on = Dashboard_Client('power_on', Trigger, TriggerRequest(),'')
+# power_on.robot_mode()
+# power_on.play()
+# power_on.program_runing()
+# power_on.program_runing()
+# power_on.call_service()
+
+
+# Dispense
+# d = Dashboard_Client('power_on', Trigger, TriggerRequest(),'d')
+# d.call_service()
+# d_load = 
 # d_connect = Dashboard_Client('quit', Trigger, TriggerRequest(), 'd')
 # call = d_connect.call_service()
 # r = d_connect.return_result()
 # print(r.success)
 
-# p_connect = Dashboard_Client('quit', Trigger, TriggerRequest(), 'p')
-# p_connect.call_service()   
 
 # d_connect = Dashboard_Client('connect', Trigger, TriggerRequest(), 'd')
 # d_connect.call_service()
 
-
-
 # is_remote_check = Dashboard_Client('is_in_remote_control', IsInRemoteControl, IsInRemoteControlRequest(), 'd')
 # is_remote_check.call_service()
 
-power_on = Dashboard_Client('power_on', Trigger, TriggerRequest(),'')
-# power_on.robot_mode()
-# power_on.play()
-power_on.program_runing()
-# power_on.program_runing()
-# power_on.call_service()
 
 
 # brake_release =Dashboard_Client('brake_release', Trigger, TriggerRequest())

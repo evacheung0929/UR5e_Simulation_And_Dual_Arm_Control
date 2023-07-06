@@ -1,10 +1,11 @@
 #!usr/bin/env python
-'''This code returns the generic service name corresponding to the provided robot name and action name,
-    here action is defined as the name of the command that will be sent to the dashboard.
 
-    Note, this is for dashboard service only!!! Other services will be coming up lately
- '''
 class Robot:
+    ''' Returns the generic service name corresponding to the provided robot name and action name,
+        here action is defined as the name of the command that will be sent to the dashboard.
+    
+        Note, this is for dashboard service only!!! Other services will be coming up lately
+    '''
     def __init__(self):
         # the name of the robot is obtained from the previously set up node name (inside package ur_robot_driver/launch/3_dual.launch)
         # this is the node name/ namespace that is corresponding to each robot

@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
 <launch>
-  <include file="$(find ur_robot_driver)/launch/1_pp_robot_bringup.launch" ns="assembly_robot" />
   <include file="$(find ur_robot_driver)/launch/2_d_robot_bringup.launch" ns="pasting_robot" />
 </launch>
